@@ -1,0 +1,134 @@
+﻿name: Publish to NuGet
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (without v prefix, e.g., 0.1.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
+jobs:
+  prepare:
+    name: Prepare Release
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+      version-tag: ${{ steps.get_version.outputs.version-tag }}
+    steps:
+      - name: Determine version
+        id: get_version
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            VERSION="${{ github.event.inputs.version }}"
+            VERSION_TAG="v${VERSION}"
+          else
+            VERSION="${GITHUB_REF#refs/tags/v}"
+            VERSION_TAG="${GITHUB_REF#refs/tags/}"
+          fi
+          echo "version=$VERSION" >>"$GITHUB_OUTPUT"
+          echo "version-tag=$VERSION_TAG" >>"$GITHUB_OUTPUT"
+          echo "Publishing version: $VERSION"
+          echo "Publishing tag: $VERSION_TAG"
+
+  release:
+    name: Build, Pack & Publish
+    needs: prepare
+    uses: HoneyDrunkStudios/HoneyDrunk.Actions/.github/workflows/release.yml@main
+    with:
+      dotnet-version: '10.0.x'
+      configuration: 'Release'
+      runs-on: 'ubuntu-latest'
+      project-path: 'HoneyDrunk.Web.Rest/HoneyDrunk.Web.Rest.slnx'
+      enable-nuget-publish: true
+      nuget-source: 'https://api.nuget.org/v3/index.json'
+      actions-ref: 'main'
+    secrets:
+      nuget-api-key: ${{ secrets.NUGET_API_KEY }}
+
+  github-release:
+    name: Create GitHub Release
+    needs: [prepare, release]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.prepare.outputs.version-tag }}
+          name: HoneyDrunk.Web.Rest ${{ needs.prepare.outputs.version-tag }}
+          body: |
+            ## HoneyDrunk.Web.Rest ${{ needs.prepare.outputs.version-tag }}
+
+            Standardized REST API conventions for HoneyDrunk.OS - Unified response envelopes, correlation propagation, exception mapping, and API contracts for consistent REST services across the Hive.
+
+            ### 📦 Packages
+
+            **HoneyDrunk.Web.Rest.Abstractions** - Pure contracts with no dependencies
+
+            ```xml
+            <PackageReference Include="HoneyDrunk.Web.Rest.Abstractions" Version="${{ needs.prepare.outputs.version }}" />
+            ```
+
+            **HoneyDrunk.Web.Rest.AspNetCore** - ASP.NET Core integration with middleware and filters
+
+            ```xml
+            <PackageReference Include="HoneyDrunk.Web.Rest.AspNetCore" Version="${{ needs.prepare.outputs.version }}" />
+            ```
+
+            ### 🔗 Links
+            - [NuGet: HoneyDrunk.Web.Rest.Abstractions](https://www.nuget.org/packages/HoneyDrunk.Web.Rest.Abstractions/${{ needs.prepare.outputs.version }})
+            - [NuGet: HoneyDrunk.Web.Rest.AspNetCore](https://www.nuget.org/packages/HoneyDrunk.Web.Rest.AspNetCore/${{ needs.prepare.outputs.version }})
+            - [Documentation](https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest#readme)
+
+            ### 🚀 Quick Start
+
+            ```csharp
+            using HoneyDrunk.Web.Rest.AspNetCore.Extensions;
+
+            var builder = WebApplication.CreateBuilder(args);
+
+            // Register REST services
+            builder.Services.AddHoneyDrunkWebRest(options =>
+            {
+                options.EnableExceptionMapping = true;
+                options.EnableRequestLoggingScope = true;
+                options.EnableModelStateValidationFilter = true;
+                options.IncludeExceptionDetails = builder.Environment.IsDevelopment();
+            });
+
+            builder.Services.AddControllers();
+
+            var app = builder.Build();
+
+            // Add REST middleware (before routing)
+            app.UseHoneyDrunkWebRest();
+
+            app.UseRouting();
+            app.MapControllers();
+
+            app.Run();
+            ```
+
+            ### ✨ Features
+            - **Response Envelopes** - Unified `ApiResult<T>` and `ApiErrorResponse` contracts
+            - **Correlation Propagation** - `X-Correlation-Id` header handling with `ICorrelationIdAccessor`
+            - **Exception Mapping** - Automatic exception-to-HTTP-status mapping
+            - **Model Validation** - Consistent validation error responses
+            - **Pagination** - `PageRequest` and `PageResult<T>` for standardized paging
+            - **JSON Conventions** - camelCase, enum-as-string, null-omission defaults
+          draft: false
+          prerelease: false
