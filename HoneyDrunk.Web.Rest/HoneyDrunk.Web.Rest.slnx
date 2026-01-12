@@ -1,0 +1,22 @@
+<Solution>
+  <Folder Name="/Docs/">
+    <File Path="../README.md" />
+  </Folder>
+  <Folder Name="/Docs/FileGuide/">
+    <File Path="docs/Abstractions.md" />
+    <File Path="docs/Architecture.md" />
+    <File Path="docs/Configuration.md" />
+    <File Path="docs/DependencyInjection.md" />
+    <File Path="docs/FILE_GUIDE.md" />
+    <File Path="docs/Middleware.md" />
+    <File Path="docs/MinimalApi.md" />
+    <File Path="docs/Mvc.md" />
+  </Folder>
+  <Folder Name="/Pipelines/">
+    <File Path="../.github/workflows/publish.yml" />
+    <File Path="../.github/workflows/validate-pr.yml" />
+  </Folder>
+  <Project Path="HoneyDrunk.Web.Rest.Abstractions/HoneyDrunk.Web.Rest.Abstractions.csproj" />
+  <Project Path="HoneyDrunk.Web.Rest.AspNetCore/HoneyDrunk.Web.Rest.AspNetCore.csproj" />
+  <Project Path="HoneyDrunk.Web.Rest.Tests/HoneyDrunk.Web.Rest.Tests.csproj" />
+</Solution>
