@@ -73,6 +73,11 @@ public sealed class ExceptionMappingMiddleware(
             correlationId,
             traceId);
 
+        if (context.Response.HasStarted)
+        {
+            return;
+        }
+
         ExceptionMappingResult mapping = ExceptionToApiErrorMapper.Map(exception);
 
         bool includeDetails = _options.IncludeExceptionDetails && environment.IsDevelopment();

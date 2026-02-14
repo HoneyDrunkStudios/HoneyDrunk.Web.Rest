@@ -1,5 +1,8 @@
+using HoneyDrunk.Kernel.Abstractions.Errors;
 using HoneyDrunk.Web.Rest.Abstractions.Errors;
+using Microsoft.AspNetCore.Http;
 using System.Net;
+using System.Text.Json;
 
 namespace HoneyDrunk.Web.Rest.AspNetCore.Errors;
 
@@ -16,10 +19,16 @@ internal static class ExceptionToApiErrorMapper
     /// <remarks>
     /// Mapping rules:
     /// <list type="bullet">
+    /// <item><description>JsonException, BadHttpRequestException returns 400 Bad Request.</description></item>
     /// <item><description>ArgumentException, ArgumentNullException returns 400 Bad Request.</description></item>
+    /// <item><description>Kernel ValidationException returns 400 Bad Request.</description></item>
     /// <item><description>InvalidOperationException returns 409 Conflict (indicates invalid state).</description></item>
+    /// <item><description>Kernel ConcurrencyException returns 409 Conflict.</description></item>
     /// <item><description>KeyNotFoundException returns 404 Not Found.</description></item>
+    /// <item><description>Kernel NotFoundException returns 404 Not Found.</description></item>
     /// <item><description>UnauthorizedAccessException returns 401 or 403 (depends on auth state, defaults to 403).</description></item>
+    /// <item><description>Kernel SecurityException returns 403 Forbidden.</description></item>
+    /// <item><description>Kernel DependencyFailureException returns 503 Service Unavailable.</description></item>
     /// <item><description>NotImplementedException returns 501 Not Implemented.</description></item>
     /// <item><description>OperationCanceledException returns 499 Client Closed Request.</description></item>
     /// <item><description>All others return 500 Internal Server Error.</description></item>
@@ -31,6 +40,18 @@ internal static class ExceptionToApiErrorMapper
 
         return exception switch
         {
+            // JSON / request body parsing errors → 400
+            JsonException => new Middleware.ExceptionMappingResult(
+                HttpStatusCode.BadRequest,
+                ApiErrorCode.BadRequest,
+                "The request body contains malformed JSON."),
+
+            BadHttpRequestException => new Middleware.ExceptionMappingResult(
+                HttpStatusCode.BadRequest,
+                ApiErrorCode.BadRequest,
+                "The request was malformed."),
+
+            // BCL argument errors → 400
             ArgumentNullException ex => new Middleware.ExceptionMappingResult(
                 HttpStatusCode.BadRequest,
                 ApiErrorCode.BadRequest,
@@ -41,6 +62,33 @@ internal static class ExceptionToApiErrorMapper
                 ApiErrorCode.BadRequest,
                 ex.Message),
 
+            // Kernel typed exceptions — matched before BCL fallbacks
+            Kernel.Abstractions.Errors.ValidationException => new Middleware.ExceptionMappingResult(
+                HttpStatusCode.BadRequest,
+                ApiErrorCode.BadRequest,
+                "A validation error occurred."),
+
+            Kernel.Abstractions.Errors.NotFoundException => new Middleware.ExceptionMappingResult(
+                HttpStatusCode.NotFound,
+                ApiErrorCode.NotFound,
+                "The requested resource was not found."),
+
+            ConcurrencyException => new Middleware.ExceptionMappingResult(
+                HttpStatusCode.Conflict,
+                ApiErrorCode.Conflict,
+                "A concurrency conflict occurred."),
+
+            Kernel.Abstractions.Errors.SecurityException => new Middleware.ExceptionMappingResult(
+                HttpStatusCode.Forbidden,
+                ApiErrorCode.Forbidden,
+                "You do not have permission to access this resource."),
+
+            DependencyFailureException => new Middleware.ExceptionMappingResult(
+                HttpStatusCode.ServiceUnavailable,
+                ApiErrorCode.ServiceUnavailable,
+                "A downstream dependency is currently unavailable."),
+
+            // BCL exceptions
             InvalidOperationException ex => new Middleware.ExceptionMappingResult(
                 HttpStatusCode.Conflict,
                 ApiErrorCode.Conflict,

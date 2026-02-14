@@ -44,7 +44,8 @@ public sealed class CorrelationMiddleware
 {
     public CorrelationMiddleware(
         RequestDelegate next,
-        IOptions<RestOptions> options);
+        IOptions<RestOptions> options,
+        ILogger<CorrelationMiddleware> logger);
     
     public async Task InvokeAsync(
         HttpContext context,
@@ -60,10 +61,11 @@ Extracts correlation ID from incoming request headers, Kernel operation context,
 
 1. **Check Kernel context** - Uses `IOperationContext.CorrelationId` if `IOperationContextAccessor` is registered
 2. **Check incoming header** - Looks for `X-Correlation-Id` (configurable)
-3. **Generate if missing** - Uses `Activity.Current?.Id` if available, otherwise creates a new GUID
-4. **Store in accessor** - Makes ID available via `ICorrelationIdAccessor`
-5. **Store in HttpContext.Items** - Uses `HeaderNames.CorrelationId` constant
-6. **Add to response header** - Returns correlation ID to caller
+3. **Compare sources** - If both Kernel and header values are present and differ, logs a warning with both values, HTTP method, and request path
+4. **Generate if missing** - Uses `Activity.Current?.Id` if available, otherwise creates a new GUID
+5. **Store in accessor** - Makes ID available via `ICorrelationIdAccessor`
+6. **Store in HttpContext.Items** - Uses `HeaderNames.CorrelationId` constant
+7. **Add to response header** - Returns correlation ID to caller
 
 ### Correlation ID Priority (highest to lowest)
 
@@ -162,25 +164,33 @@ Catches unhandled exceptions and converts them to standardized `ApiErrorResponse
 
 1. **Wrap pipeline** - Runs after correlation middleware
 2. **Catch exceptions** - Intercepts any unhandled exception
-3. **Map to status code** - Uses `ExceptionToApiErrorMapper` for mapping
-4. **Build response** - Creates `ApiErrorResponse` with correlation ID
-5. **Log error** - Logs exception with correlation context
-6. **Write response** - Returns JSON error response
+3. **Log error** - Logs exception with correlation context
+4. **Check HasStarted** - If `Response.HasStarted`, returns without writing (exception is still logged)
+5. **Map to status code** - Uses `ExceptionToApiErrorMapper` for mapping
+6. **Build response** - Creates `ApiErrorResponse` with correlation ID
+7. **Write response** - Returns JSON error response
 
 ### Default Mappings
 
 | Exception Type | HTTP Status | Error Code |
 |----------------|-------------|------------|
+| `JsonException` | 400 Bad Request | `BAD_REQUEST` |
+| `BadHttpRequestException` | 400 Bad Request | `BAD_REQUEST` |
 | `ArgumentNullException` | 400 Bad Request | `BAD_REQUEST` |
 | `ArgumentException` | 400 Bad Request | `BAD_REQUEST` |
+| Kernel `ValidationException` | 400 Bad Request | `BAD_REQUEST` |
 | `InvalidOperationException` | 409 Conflict | `CONFLICT` |
+| Kernel `ConcurrencyException` | 409 Conflict | `CONFLICT` |
 | `KeyNotFoundException` | 404 Not Found | `NOT_FOUND` |
+| Kernel `NotFoundException` | 404 Not Found | `NOT_FOUND` |
 | `UnauthorizedAccessException` | 403 Forbidden | `FORBIDDEN` |
+| Kernel `SecurityException` | 403 Forbidden | `FORBIDDEN` |
+| Kernel `DependencyFailureException` | 503 Service Unavailable | `SERVICE_UNAVAILABLE` |
 | `NotImplementedException` | 501 Not Implemented | `NOT_IMPLEMENTED` |
 | `OperationCanceledException` | 499 Client Closed | `GENERAL_ERROR` |
 | All others | 500 Internal Server Error | `INTERNAL_ERROR` |
 
-> **Note:** These mappings reflect the defaults in `ExceptionToApiErrorMapper`. Custom exception handling can be added by catching exceptions before they reach this middleware.
+> **Note:** Kernel typed exceptions are matched before their BCL equivalents for specificity. All Kernel exception messages use safe static strings — no internal exception messages are leaked. The middleware also guards against `Response.HasStarted` — the exception is always logged, but no response is attempted if headers have already been sent.
 
 ### Configuration
 

@@ -282,6 +282,10 @@ HoneyDrunk.Web.Rest/
     ├── Abstractions/                     # Contract tests
     ├── AspNetCore/                       # Middleware tests
     └── TestHost/                         # Test infrastructure
+
+└── HoneyDrunk.Web.Rest.Canary/          # Canary integration tests
+    ├── 26 tests across 5 invariants
+    └── Validates upstream contract compatibility
 ```
 
 ---
@@ -299,11 +303,18 @@ HoneyDrunk.Web.Rest/
 
 | Exception Type | HTTP Status | Error Code |
 |----------------|-------------|------------|
-| `KeyNotFoundException` | 404 Not Found | `NOT_FOUND` |
+| `JsonException` | 400 Bad Request | `BAD_REQUEST` |
+| `BadHttpRequestException` | 400 Bad Request | `BAD_REQUEST` |
 | `ArgumentException` | 400 Bad Request | `BAD_REQUEST` |
 | `ArgumentNullException` | 400 Bad Request | `BAD_REQUEST` |
+| Kernel `ValidationException` | 400 Bad Request | `BAD_REQUEST` |
 | `InvalidOperationException` | 409 Conflict | `CONFLICT` |
+| Kernel `ConcurrencyException` | 409 Conflict | `CONFLICT` |
+| `KeyNotFoundException` | 404 Not Found | `NOT_FOUND` |
+| Kernel `NotFoundException` | 404 Not Found | `NOT_FOUND` |
 | `UnauthorizedAccessException` | 403 Forbidden | `FORBIDDEN` |
+| Kernel `SecurityException` | 403 Forbidden | `FORBIDDEN` |
+| Kernel `DependencyFailureException` | 503 Service Unavailable | `SERVICE_UNAVAILABLE` |
 | `NotImplementedException` | 501 Not Implemented | `NOT_IMPLEMENTED` |
 | `OperationCanceledException` | 499 Client Closed (client aborted) | `GENERAL_ERROR` |
 | Other exceptions | 500 Internal Server Error | `INTERNAL_ERROR` |
@@ -386,5 +397,5 @@ Applications using HoneyDrunk.Web.Rest:
 
 ---
 
-*Last Updated: 2026-01-11*  
+*Last Updated: 2026-02-14*  
 *Target Framework: .NET 10.0*

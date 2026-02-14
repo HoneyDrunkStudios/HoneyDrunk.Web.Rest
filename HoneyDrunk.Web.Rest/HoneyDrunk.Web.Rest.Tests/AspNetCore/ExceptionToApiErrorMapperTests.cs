@@ -1,8 +1,10 @@
 using HoneyDrunk.Web.Rest.Abstractions.Errors;
 using HoneyDrunk.Web.Rest.AspNetCore.Errors;
 using HoneyDrunk.Web.Rest.AspNetCore.Middleware;
+using Microsoft.AspNetCore.Http;
 using Shouldly;
 using System.Net;
+using System.Text.Json;
 
 namespace HoneyDrunk.Web.Rest.Tests.AspNetCore;
 
@@ -181,5 +183,110 @@ public sealed class ExceptionToApiErrorMapperTests
         string result = ExceptionToApiErrorMapper.GetUnauthorizedErrorCode(isAuthenticated: false);
 
         result.ShouldBe(ApiErrorCode.Unauthorized);
+    }
+
+    /// <summary>
+    /// Verifies that JsonException maps to 400 Bad Request.
+    /// </summary>
+    [Fact]
+    public void Map_JsonException_ReturnsBadRequest()
+    {
+        JsonException exception = new("Unexpected token");
+
+        ExceptionMappingResult result = ExceptionToApiErrorMapper.Map(exception);
+
+        result.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        result.ErrorCode.ShouldBe(ApiErrorCode.BadRequest);
+        result.Message.ShouldBe("The request body contains malformed JSON.");
+    }
+
+    /// <summary>
+    /// Verifies that BadHttpRequestException maps to 400 Bad Request.
+    /// </summary>
+    [Fact]
+    public void Map_BadHttpRequestException_ReturnsBadRequest()
+    {
+        BadHttpRequestException exception = new("Bad request", 400);
+
+        ExceptionMappingResult result = ExceptionToApiErrorMapper.Map(exception);
+
+        result.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        result.ErrorCode.ShouldBe(ApiErrorCode.BadRequest);
+        result.Message.ShouldBe("The request was malformed.");
+    }
+
+    /// <summary>
+    /// Verifies that Kernel ValidationException maps to 400 Bad Request.
+    /// </summary>
+    [Fact]
+    public void Map_KernelValidationException_ReturnsBadRequest()
+    {
+        HoneyDrunk.Kernel.Abstractions.Errors.ValidationException exception = new("Field is invalid");
+
+        ExceptionMappingResult result = ExceptionToApiErrorMapper.Map(exception);
+
+        result.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        result.ErrorCode.ShouldBe(ApiErrorCode.BadRequest);
+        result.Message.ShouldBe("A validation error occurred.");
+    }
+
+    /// <summary>
+    /// Verifies that Kernel NotFoundException maps to 404 Not Found.
+    /// </summary>
+    [Fact]
+    public void Map_KernelNotFoundException_ReturnsNotFound()
+    {
+        HoneyDrunk.Kernel.Abstractions.Errors.NotFoundException exception = new("Entity missing");
+
+        ExceptionMappingResult result = ExceptionToApiErrorMapper.Map(exception);
+
+        result.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        result.ErrorCode.ShouldBe(ApiErrorCode.NotFound);
+        result.Message.ShouldBe("The requested resource was not found.");
+    }
+
+    /// <summary>
+    /// Verifies that Kernel ConcurrencyException maps to 409 Conflict.
+    /// </summary>
+    [Fact]
+    public void Map_KernelConcurrencyException_ReturnsConflict()
+    {
+        HoneyDrunk.Kernel.Abstractions.Errors.ConcurrencyException exception = new("Version mismatch");
+
+        ExceptionMappingResult result = ExceptionToApiErrorMapper.Map(exception);
+
+        result.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+        result.ErrorCode.ShouldBe(ApiErrorCode.Conflict);
+        result.Message.ShouldBe("A concurrency conflict occurred.");
+    }
+
+    /// <summary>
+    /// Verifies that Kernel SecurityException maps to 403 Forbidden.
+    /// </summary>
+    [Fact]
+    public void Map_KernelSecurityException_ReturnsForbidden()
+    {
+        HoneyDrunk.Kernel.Abstractions.Errors.SecurityException exception = new("Access denied");
+
+        ExceptionMappingResult result = ExceptionToApiErrorMapper.Map(exception);
+
+        result.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+        result.ErrorCode.ShouldBe(ApiErrorCode.Forbidden);
+        result.Message.ShouldBe("You do not have permission to access this resource.");
+    }
+
+    /// <summary>
+    /// Verifies that Kernel DependencyFailureException maps to 503 Service Unavailable.
+    /// </summary>
+    [Fact]
+    public void Map_KernelDependencyFailureException_ReturnsServiceUnavailable()
+    {
+        HoneyDrunk.Kernel.Abstractions.Errors.DependencyFailureException exception = new("Database unreachable");
+
+        ExceptionMappingResult result = ExceptionToApiErrorMapper.Map(exception);
+
+        result.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
+        result.ErrorCode.ShouldBe(ApiErrorCode.ServiceUnavailable);
+        result.Message.ShouldBe("A downstream dependency is currently unavailable.");
     }
 }
