@@ -5,6 +5,39 @@ All notable changes to HoneyDrunk.Web.Rest.AspNetCore will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-02-14
+
+### Changed
+
+#### Dependencies
+- Bumped `HoneyDrunk.Kernel.Abstractions` from 0.3.0 to 0.4.0
+- Bumped `HoneyDrunk.Transport` from 0.3.0 to 0.4.0
+- Bumped `HoneyDrunk.Auth.AspNetCore` from 0.1.0 to 0.2.0
+
+### Added
+
+#### Exception Mapping
+- `JsonException` maps to 400 Bad Request (`BAD_REQUEST`) — malformed JSON bodies
+- `BadHttpRequestException` maps to 400 Bad Request (`BAD_REQUEST`) — malformed requests
+- Kernel `ValidationException` maps to 400 Bad Request (`BAD_REQUEST`)
+- Kernel `NotFoundException` maps to 404 Not Found (`NOT_FOUND`)
+- Kernel `ConcurrencyException` maps to 409 Conflict (`CONFLICT`)
+- Kernel `SecurityException` maps to 403 Forbidden (`FORBIDDEN`)
+- Kernel `DependencyFailureException` maps to 503 Service Unavailable (`SERVICE_UNAVAILABLE`)
+- All Kernel exception messages use safe static strings — no internal message leakage
+
+#### Middleware
+- `ExceptionMappingMiddleware` now guards against `Response.HasStarted` — exception is still logged but no response is attempted when headers have already been sent
+- `CorrelationMiddleware` now accepts `ILogger<CorrelationMiddleware>` and logs a warning when both Kernel and header correlation IDs are present but differ (includes header value, kernel value, HTTP method, and request path)
+
+#### Auth
+- `RestAuthorizationResultHandler.WriteForbiddenResponseAsync` falls back to `HttpContext.User.Identity.IsAuthenticated` when `IAuthenticatedIdentityAccessor` is not registered
+
+### Notes
+- Kernel typed exceptions are matched before BCL fallbacks in the switch expression to ensure specificity
+- The HasStarted guard prevents `InvalidOperationException` from being thrown when middleware runs after streaming has begun
+- Correlation mismatch warning helps diagnose middleware ordering issues in multi-context environments
+
 ## [0.1.0] - 2026-01-10
 
 ### Added
@@ -97,4 +130,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Kernel/Auth/Transport integrations are optional - middleware gracefully degrades when not registered
 - Auth failure shaping uses `IAuthorizationMiddlewareResultHandler` for scheme-agnostic 401/403 handling
 
+[0.2.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.2.0
 [0.1.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.1.0

@@ -4,6 +4,7 @@ using HoneyDrunk.Web.Rest.AspNetCore.Configuration;
 using HoneyDrunk.Web.Rest.AspNetCore.Context;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
 
@@ -19,7 +20,8 @@ namespace HoneyDrunk.Web.Rest.AspNetCore.Middleware;
 /// </remarks>
 /// <param name="next">The next middleware in the pipeline.</param>
 /// <param name="options">The REST options.</param>
-public sealed class CorrelationMiddleware(RequestDelegate next, IOptions<RestOptions> options)
+/// <param name="logger">The logger.</param>
+public sealed class CorrelationMiddleware(RequestDelegate next, IOptions<RestOptions> options, ILogger<CorrelationMiddleware> logger)
 {
     private readonly RequestDelegate _next = next;
     private readonly RestOptions _options = options.Value;
@@ -62,18 +64,46 @@ public sealed class CorrelationMiddleware(RequestDelegate next, IOptions<RestOpt
 
     private string GetOrCreateCorrelationId(HttpContext context, IOperationContextAccessor? operationContextAccessor)
     {
+        string? kernelCorrelationId = null;
+
         // Priority 1: Kernel operation context (if available and has a correlation ID)
         if (operationContextAccessor?.Current is { } operationContext &&
             !string.IsNullOrWhiteSpace(operationContext.CorrelationId))
         {
-            return operationContext.CorrelationId;
+            kernelCorrelationId = operationContext.CorrelationId;
         }
 
-        // Priority 2: Incoming request header
+        // Check for incoming request header
+        string? headerCorrelationId = null;
         if (context.Request.Headers.TryGetValue(_options.CorrelationIdHeaderName, out Microsoft.Extensions.Primitives.StringValues headerValue)
             && !string.IsNullOrWhiteSpace(headerValue.ToString()))
         {
-            return headerValue.ToString();
+            headerCorrelationId = headerValue.ToString();
+        }
+
+        // Log warning if both exist and differ
+        if (kernelCorrelationId is not null && headerCorrelationId is not null
+            && !string.Equals(kernelCorrelationId, headerCorrelationId, StringComparison.Ordinal))
+        {
+            logger.LogWarning(
+                "Correlation ID mismatch: header '{HeaderCorrelationId}' differs from Kernel context '{KernelCorrelationId}'. "
+                + "Kernel correlation takes precedence. Request: {HttpMethod} {RequestPath}",
+                headerCorrelationId,
+                kernelCorrelationId,
+                context.Request.Method,
+                context.Request.Path);
+        }
+
+        // Priority 1: Kernel wins
+        if (kernelCorrelationId is not null)
+        {
+            return kernelCorrelationId;
+        }
+
+        // Priority 2: Incoming request header
+        if (headerCorrelationId is not null)
+        {
+            return headerCorrelationId;
         }
 
         // Priority 3: Generate a new one if allowed

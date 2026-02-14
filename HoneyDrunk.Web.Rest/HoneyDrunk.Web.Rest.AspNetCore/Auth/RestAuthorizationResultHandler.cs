@@ -77,10 +77,14 @@ internal sealed class RestAuthorizationResultHandler : IAuthorizationMiddlewareR
         string correlationId = RestAuthExtensions.GetCorrelationId(context);
         string? traceId = Activity.Current?.Id;
 
-        // Use IAuthenticatedIdentityAccessor if available to provide more context
+        // Use IAuthenticatedIdentityAccessor if available; fall back to HttpContext.User
         IAuthenticatedIdentityAccessor? identityAccessor = context.RequestServices.GetService(typeof(IAuthenticatedIdentityAccessor)) as IAuthenticatedIdentityAccessor;
 
-        string message = identityAccessor?.IsAuthenticated == true
+        bool isAuthenticated = identityAccessor?.IsAuthenticated
+            ?? context.User?.Identity?.IsAuthenticated
+            ?? false;
+
+        string message = isAuthenticated
             ? "You do not have permission to access this resource."
             : "Authentication is required.";
 

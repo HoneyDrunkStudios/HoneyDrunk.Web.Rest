@@ -36,6 +36,7 @@ app.Run();
 - Generates a new correlation ID if not present
 - Returns correlation ID in response headers
 - Makes correlation ID available via `ICorrelationIdAccessor`
+- Logs a warning when both Kernel and header correlation IDs are present but differ
 
 ### Kernel Integration
 
@@ -51,6 +52,7 @@ When `HoneyDrunk.Kernel` is registered, the middleware automatically:
 When `HoneyDrunk.Auth.AspNetCore` is registered:
 - Uses `IAuthenticatedIdentityAccessor` to provide context-aware error messages
 - Shapes 401/403 responses as `ApiErrorResponse` via `IAuthorizationMiddlewareResultHandler`
+- Falls back to `HttpContext.User.Identity.IsAuthenticated` when `IAuthenticatedIdentityAccessor` is not registered
 
 ### Transport Integration
 
@@ -70,12 +72,22 @@ All unhandled exceptions are mapped to `ApiErrorResponse`:
 
 | Exception Type | HTTP Status | Error Code |
 |----------------|-------------|------------|
+| JsonException | 400 | BAD_REQUEST |
+| BadHttpRequestException | 400 | BAD_REQUEST |
 | ArgumentException | 400 | BAD_REQUEST |
+| Kernel ValidationException | 400 | BAD_REQUEST |
 | InvalidOperationException | 409 | CONFLICT |
+| Kernel ConcurrencyException | 409 | CONFLICT |
 | KeyNotFoundException | 404 | NOT_FOUND |
+| Kernel NotFoundException | 404 | NOT_FOUND |
 | UnauthorizedAccessException | 403 | FORBIDDEN |
+| Kernel SecurityException | 403 | FORBIDDEN |
+| Kernel DependencyFailureException | 503 | SERVICE_UNAVAILABLE |
 | NotImplementedException | 501 | NOT_IMPLEMENTED |
+| OperationCanceledException | 499 | GENERAL_ERROR |
 | Other | 500 | INTERNAL_ERROR |
+
+> **Note:** Kernel exceptions use safe static messages. The `HasStarted` guard prevents errors when response streaming has begun.
 
 ### Model Validation
 
@@ -126,7 +138,7 @@ app.MapDelete("/api/items/{id}", DeleteItemAsync)
 ## Dependencies
 
 - HoneyDrunk.Web.Rest.Abstractions (contracts)
-- HoneyDrunk.Kernel.Abstractions (optional, for Grid context)
-- HoneyDrunk.Auth.AspNetCore (optional, for identity context)
-- HoneyDrunk.Transport (optional, for envelope mapping)
+- HoneyDrunk.Kernel.Abstractions 0.4.0 (optional, for Grid context and typed exceptions)
+- HoneyDrunk.Auth.AspNetCore 0.2.0 (optional, for identity context)
+- HoneyDrunk.Transport 0.4.0 (optional, for envelope mapping)
 - Microsoft.AspNetCore.App (framework reference)

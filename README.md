@@ -33,7 +33,7 @@ HoneyDrunk.Web.Rest provides **REST API conventions and middleware** for HoneyDr
 ```xml
 <ItemGroup>
   <!-- Full ASP.NET Core integration -->
-  <PackageReference Include="HoneyDrunk.Web.Rest.AspNetCore" Version="0.1.0" />
+  <PackageReference Include="HoneyDrunk.Web.Rest.AspNetCore" Version="0.2.0" />
   
   <!-- Or just the contracts (no runtime dependencies) -->
   <PackageReference Include="HoneyDrunk.Web.Rest.Abstractions" Version="0.1.0" />
@@ -255,9 +255,13 @@ HoneyDrunk.Web.Rest/
 |   +-- Transport/                        # Transport result extensions
 |
 +-- HoneyDrunk.Web.Rest.Tests/           # Integration tests
-    +-- Abstractions/                     # Contract tests
-    +-- AspNetCore/                       # Middleware tests
-    +-- TestHost/                         # Test infrastructure
+|   +-- Abstractions/                     # Contract tests
+|   +-- AspNetCore/                       # Middleware tests
+|   +-- TestHost/                         # Test infrastructure
+|
++-- HoneyDrunk.Web.Rest.Canary/          # Canary integration tests
+    +-- 26 tests across 5 invariants
+    +-- Validates upstream contract compatibility
 ```
 
 ---

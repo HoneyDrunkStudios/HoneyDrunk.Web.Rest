@@ -8,10 +8,10 @@
 
     <!-- Package Metadata -->
     <PackageId>HoneyDrunk.Web.Rest.AspNetCore</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Authors>HoneyDrunk Studios</Authors>
     <Description>ASP.NET Core integration for HoneyDrunk REST conventions. Provides middleware for correlation propagation, exception mapping, and request logging. Includes MVC filters for model validation, minimal API endpoint conventions, and JSON serialization defaults. Ensures consistent API responses across all services.</Description>
-    <PackageReleaseNotes>v0.1.0: Initial release with CorrelationMiddleware, ExceptionMappingMiddleware, RequestLoggingScopeMiddleware, ModelStateValidationFilter, ApiConventions, RestEndpointConventions, JsonOptionsDefaults, and ICorrelationIdAccessor.</PackageReleaseNotes>
+    <PackageReleaseNotes>v0.2.0: Added JsonException/BadHttpRequestException to 400 mapping, Kernel typed exception mappings (ValidationException, NotFoundException, ConcurrencyException, SecurityException, DependencyFailureException), HasStarted guard in ExceptionMappingMiddleware, correlation mismatch warning logging, and auth HttpContext.User fallback. Bumped Kernel.Abstractions to 0.4.0, Transport to 0.4.0, Auth.AspNetCore to 0.2.0.</PackageReleaseNotes>
     <PackageTags>rest;api;aspnetcore;middleware;correlation;exception;validation;filter;json;conventions</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -29,13 +29,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HoneyDrunk.Auth.AspNetCore" Version="0.1.0" />
-    <PackageReference Include="HoneyDrunk.Kernel.Abstractions" Version="0.3.0" />
+    <PackageReference Include="HoneyDrunk.Auth.AspNetCore" Version="0.2.0" />
+    <PackageReference Include="HoneyDrunk.Kernel.Abstractions" Version="0.4.0" />
     <PackageReference Include="HoneyDrunk.Standards" Version="0.2.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="HoneyDrunk.Transport" Version="0.3.0" />
+    <PackageReference Include="HoneyDrunk.Transport" Version="0.4.0" />
   </ItemGroup>
 
   <ItemGroup>
