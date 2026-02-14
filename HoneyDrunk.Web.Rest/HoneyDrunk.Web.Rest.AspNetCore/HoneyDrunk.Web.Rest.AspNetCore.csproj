@@ -43,7 +43,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.101" />
+    <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.103" />
   </ItemGroup>
 
   <ItemGroup>
