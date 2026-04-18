@@ -26,23 +26,18 @@ public sealed class ModelStateValidationFilter : IActionFilter
             ?? (context.HttpContext.Items.TryGetValue(HeaderNames.CorrelationId, out object? value) && value is string id ? id : Guid.NewGuid().ToString("N"));
         string? traceId = Activity.Current?.Id;
 
-        List<ValidationError> validationErrors = [];
-
-        foreach (System.Collections.Generic.KeyValuePair<string, Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateEntry> entry in context.ModelState)
-        {
-            foreach (Microsoft.AspNetCore.Mvc.ModelBinding.ModelError error in entry.Value.Errors)
-            {
-                string message = !string.IsNullOrWhiteSpace(error.ErrorMessage)
-                    ? error.ErrorMessage
-                    : error.Exception?.Message ?? "Invalid value.";
-
-                validationErrors.Add(new ValidationError
-                {
-                    Field = entry.Key,
-                    Message = message,
-                });
-            }
-        }
+        List<ValidationError> validationErrors =
+            context.ModelState
+                .SelectMany(
+                    entry => (entry.Value?.Errors ?? []).Select(
+                        error => new ValidationError
+                        {
+                            Field = entry.Key,
+                            Message = !string.IsNullOrWhiteSpace(error.ErrorMessage)
+                                ? error.ErrorMessage
+                                : error.Exception?.Message ?? "Invalid value.",
+                        }))
+                .ToList();
 
         ApiErrorResponse response = ApiErrorResponse.CreateValidationError(correlationId, validationErrors, traceId);
 

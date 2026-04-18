@@ -43,11 +43,20 @@ public sealed class ExceptionMappingMiddleware(
         {
             await next(context).ConfigureAwait(false);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ShouldHandleException(ex))
         {
             await HandleExceptionAsync(context, ex, correlationIdAccessor).ConfigureAwait(false);
         }
     }
+
+    private static bool ShouldHandleException(Exception exception) =>
+        exception is not OperationCanceledException
+        and not OutOfMemoryException
+        and not StackOverflowException
+        and not AccessViolationException
+        and not AppDomainUnloadedException
+        and not BadImageFormatException
+        and not CannotUnloadAppDomainException;
 
     private async Task HandleExceptionAsync(HttpContext context, Exception exception, ICorrelationIdAccessor correlationIdAccessor)
     {
