@@ -50,8 +50,7 @@ public sealed class ExceptionMappingMiddleware(
     }
 
     private static bool ShouldHandleException(Exception exception) =>
-        exception is not OperationCanceledException
-        and not OutOfMemoryException
+        exception is not OutOfMemoryException
         and not StackOverflowException
         and not AccessViolationException
         and not AppDomainUnloadedException

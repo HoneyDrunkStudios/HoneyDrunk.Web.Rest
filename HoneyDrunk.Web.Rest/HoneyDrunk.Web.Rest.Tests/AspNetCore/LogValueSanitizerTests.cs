@@ -9,14 +9,32 @@ namespace HoneyDrunk.Web.Rest.Tests.AspNetCore;
 public sealed class LogValueSanitizerTests
 {
     /// <summary>
-    /// Verifies that line-break characters are removed from user-controlled values.
+    /// Verifies that carriage returns, line feeds, and tabs are sanitized.
     /// </summary>
     [Fact]
-    public void Sanitize_RemovesControlCharacters()
+    public void Sanitize_RemovesLineBreaksAndTabs()
     {
         string sanitized = LogValueSanitizer.Sanitize("line1\r\nline2\tline3")!;
 
         sanitized.ShouldBe("line1line2 line3");
+    }
+
+    /// <summary>
+    /// Verifies that null values are preserved.
+    /// </summary>
+    [Fact]
+    public void Sanitize_NullValue_ReturnsNull()
+    {
+        LogValueSanitizer.Sanitize(null).ShouldBeNull();
+    }
+
+    /// <summary>
+    /// Verifies that empty values are preserved.
+    /// </summary>
+    [Fact]
+    public void Sanitize_EmptyValue_ReturnsEmptyString()
+    {
+        LogValueSanitizer.Sanitize(string.Empty).ShouldBe(string.Empty);
     }
 
     /// <summary>

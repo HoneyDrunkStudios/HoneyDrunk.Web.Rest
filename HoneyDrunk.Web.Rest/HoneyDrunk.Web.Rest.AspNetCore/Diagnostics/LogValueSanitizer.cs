@@ -6,7 +6,8 @@ namespace HoneyDrunk.Web.Rest.AspNetCore.Diagnostics;
 internal static class LogValueSanitizer
 {
     /// <summary>
-    /// Removes control characters that could be used to forge multi-line log entries.
+    /// Removes carriage returns and line feeds, and replaces tabs with spaces,
+    /// to reduce the risk of forged multi-line log entries.
     /// </summary>
     /// <param name="value">The value to sanitize.</param>
     /// <returns>The sanitized value.</returns>
