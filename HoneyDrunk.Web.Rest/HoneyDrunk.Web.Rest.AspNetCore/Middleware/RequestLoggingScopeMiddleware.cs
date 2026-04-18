@@ -2,6 +2,7 @@ using HoneyDrunk.Kernel.Abstractions.Context;
 using HoneyDrunk.Web.Rest.Abstractions.Telemetry;
 using HoneyDrunk.Web.Rest.AspNetCore.Configuration;
 using HoneyDrunk.Web.Rest.AspNetCore.Context;
+using HoneyDrunk.Web.Rest.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -48,16 +49,16 @@ public sealed class RequestLoggingScopeMiddleware(
 
         Dictionary<string, object?> scopeState = new()
         {
-            [RestTelemetryTags.CorrelationId] = correlationIdAccessor.CorrelationId,
-            [RestTelemetryTags.HttpMethod] = context.Request.Method,
-            [RestTelemetryTags.HttpPath] = context.Request.Path.Value,
-            [RestTelemetryTags.RequestId] = context.TraceIdentifier,
+            [RestTelemetryTags.CorrelationId] = LogValueSanitizer.Sanitize(correlationIdAccessor.CorrelationId),
+            [RestTelemetryTags.HttpMethod] = LogValueSanitizer.Sanitize(context.Request.Method),
+            [RestTelemetryTags.HttpPath] = LogValueSanitizer.Sanitize(context.Request.Path.Value),
+            [RestTelemetryTags.RequestId] = LogValueSanitizer.Sanitize(context.TraceIdentifier),
         };
 
         // Add trace ID if available
         if (_options.IncludeTraceId && Activity.Current?.Id is not null)
         {
-            scopeState["TraceId"] = Activity.Current.Id;
+            scopeState["TraceId"] = LogValueSanitizer.Sanitize(Activity.Current.Id);
         }
 
         // Enrich with Kernel context values if available
@@ -79,28 +80,28 @@ public sealed class RequestLoggingScopeMiddleware(
         // Add operation-level context
         if (!string.IsNullOrWhiteSpace(operationContext.OperationId))
         {
-            scopeState["OperationId"] = operationContext.OperationId;
+            scopeState["OperationId"] = LogValueSanitizer.Sanitize(operationContext.OperationId);
         }
 
         if (!string.IsNullOrWhiteSpace(operationContext.OperationName))
         {
-            scopeState["OperationName"] = operationContext.OperationName;
+            scopeState["OperationName"] = LogValueSanitizer.Sanitize(operationContext.OperationName);
         }
 
         if (!string.IsNullOrWhiteSpace(operationContext.CausationId))
         {
-            scopeState["CausationId"] = operationContext.CausationId;
+            scopeState["CausationId"] = LogValueSanitizer.Sanitize(operationContext.CausationId);
         }
 
         // Add tenant/project context
         if (!string.IsNullOrWhiteSpace(operationContext.TenantId))
         {
-            scopeState[RestTelemetryTags.TenantId] = operationContext.TenantId;
+            scopeState[RestTelemetryTags.TenantId] = LogValueSanitizer.Sanitize(operationContext.TenantId);
         }
 
         if (!string.IsNullOrWhiteSpace(operationContext.ProjectId))
         {
-            scopeState["ProjectId"] = operationContext.ProjectId;
+            scopeState["ProjectId"] = LogValueSanitizer.Sanitize(operationContext.ProjectId);
         }
 
         // Add Grid context values
@@ -108,17 +109,17 @@ public sealed class RequestLoggingScopeMiddleware(
 
         if (!string.IsNullOrWhiteSpace(gridContext.NodeId))
         {
-            scopeState["NodeId"] = gridContext.NodeId;
+            scopeState["NodeId"] = LogValueSanitizer.Sanitize(gridContext.NodeId);
         }
 
         if (!string.IsNullOrWhiteSpace(gridContext.StudioId))
         {
-            scopeState["StudioId"] = gridContext.StudioId;
+            scopeState["StudioId"] = LogValueSanitizer.Sanitize(gridContext.StudioId);
         }
 
         if (!string.IsNullOrWhiteSpace(gridContext.Environment))
         {
-            scopeState["Environment"] = gridContext.Environment;
+            scopeState["Environment"] = LogValueSanitizer.Sanitize(gridContext.Environment);
         }
     }
 }

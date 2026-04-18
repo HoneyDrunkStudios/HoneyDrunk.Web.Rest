@@ -2,6 +2,7 @@ using HoneyDrunk.Kernel.Abstractions.Context;
 using HoneyDrunk.Web.Rest.Abstractions.Constants;
 using HoneyDrunk.Web.Rest.AspNetCore.Configuration;
 using HoneyDrunk.Web.Rest.AspNetCore.Context;
+using HoneyDrunk.Web.Rest.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -88,10 +89,10 @@ public sealed class CorrelationMiddleware(RequestDelegate next, IOptions<RestOpt
             logger.LogWarning(
                 "Correlation ID mismatch: header '{HeaderCorrelationId}' differs from Kernel context '{KernelCorrelationId}'. "
                 + "Kernel correlation takes precedence. Request: {HttpMethod} {RequestPath}",
-                headerCorrelationId,
-                kernelCorrelationId,
-                context.Request.Method,
-                context.Request.Path);
+                LogValueSanitizer.Sanitize(headerCorrelationId),
+                LogValueSanitizer.Sanitize(kernelCorrelationId),
+                LogValueSanitizer.Sanitize(context.Request.Method),
+                LogValueSanitizer.Sanitize(context.Request.Path.Value));
         }
 
         // Priority 1: Kernel wins
