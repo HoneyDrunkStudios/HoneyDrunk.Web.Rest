@@ -27,7 +27,30 @@ app.MapControllers();
 app.Run();
 ```
 
+For deployable HoneyDrunk nodes, use the ADR-0005/0006 bootstrap helper with `AZURE_KEYVAULT_URI`,
+`AZURE_APPCONFIG_ENDPOINT`, and `HONEYDRUNK_NODE_ID` supplied by the host environment:
+
+```csharp
+builder.Services.AddHoneyDrunkNode(options =>
+{
+    options.NodeId = new("honeydrunk-web-rest");
+    // Configure the remaining node identity options here.
+})
+.AddWebRestBootstrap();
+
+var app = builder.Build();
+app.MapHoneyDrunkWebRestVaultInvalidationWebhook();
+```
+
 ## Features
+
+### ADR-0005/0006 Bootstrap
+
+- Reads Key Vault location from `AZURE_KEYVAULT_URI`
+- Reads shared App Configuration location from `AZURE_APPCONFIG_ENDPOINT`
+- Uses `HONEYDRUNK_NODE_ID` as the App Configuration label, for example `honeydrunk-web-rest`
+- Registers the Event Grid `/internal/vault/invalidate` webhook for Vault cache invalidation
+- Keeps application secrets behind `ISecretStore`; no Web.Rest source reads secret values from `IConfiguration`
 
 ### Correlation ID Propagation
 
@@ -141,4 +164,7 @@ app.MapDelete("/api/items/{id}", DeleteItemAsync)
 - HoneyDrunk.Kernel.Abstractions 0.4.0 (optional, for Grid context and typed exceptions)
 - HoneyDrunk.Auth.AspNetCore 0.2.0 (optional, for identity context)
 - HoneyDrunk.Transport 0.4.0 (optional, for envelope mapping)
+- HoneyDrunk.Vault.EventGrid 0.3.0 (for cache invalidation webhook mapping)
+- HoneyDrunk.Vault.Providers.AppConfiguration 0.3.0 (for env-var-driven App Configuration bootstrap)
+- HoneyDrunk.Vault.Providers.AzureKeyVault 0.3.0 (for env-var-driven Key Vault bootstrap)
 - Microsoft.AspNetCore.App (framework reference)

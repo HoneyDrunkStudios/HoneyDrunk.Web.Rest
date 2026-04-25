@@ -1,4 +1,7 @@
 using HoneyDrunk.Kernel.Abstractions.Context;
+using HoneyDrunk.Vault.Abstractions;
+using HoneyDrunk.Vault.EventGrid.Extensions;
+using HoneyDrunk.Vault.Models;
 using HoneyDrunk.Web.Rest.AspNetCore.Extensions;
 using HoneyDrunk.Web.Rest.AspNetCore.Serialization;
 using Microsoft.AspNetCore.Builder;
@@ -38,6 +41,16 @@ internal sealed class CanaryHostFactory : IDisposable
     /// endpoint but NO <c>IAuthenticatedIdentityAccessor</c>, forcing the fallback to HttpContext.User.
     /// </summary>
     public bool UseAuthWithoutIdentityAccessor { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether to register the Vault invalidation webhook canary endpoint.
+    /// </summary>
+    public bool EnableVaultInvalidationWebhook { get; set; }
+
+    /// <summary>
+    /// Gets the cache invalidator used by the Vault invalidation webhook canary.
+    /// </summary>
+    public RecordingSecretCacheInvalidator VaultCacheInvalidator { get; } = new();
 
     /// <summary>
     /// Creates an HTTP client backed by the in-process test server.
@@ -87,6 +100,13 @@ internal sealed class CanaryHostFactory : IDisposable
                         services.AddAuthorizationBuilder()
                             .AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
                     }
+
+                    if (EnableVaultInvalidationWebhook)
+                    {
+                        services.AddSingleton<ISecretStore>(new SharedSecretStore());
+                        services.AddSingleton<ISecretCacheInvalidator>(VaultCacheInvalidator);
+                        services.AddVaultEventGridInvalidation();
+                    }
                 });
 
                 webBuilder.Configure(app =>
@@ -103,6 +123,11 @@ internal sealed class CanaryHostFactory : IDisposable
                     app.UseEndpoints(endpoints =>
                     {
                         endpoints.MapCanaryEndpoints();
+
+                        if (EnableVaultInvalidationWebhook)
+                        {
+                            endpoints.MapHoneyDrunkWebRestVaultInvalidationWebhook();
+                        }
 
                         if (UseAuthWithoutIdentityAccessor)
                         {
@@ -129,5 +154,46 @@ internal sealed class CanaryHostFactory : IDisposable
     {
         _client?.Dispose();
         _host?.Dispose();
+    }
+
+    internal sealed class RecordingSecretCacheInvalidator : ISecretCacheInvalidator
+    {
+        public List<string> InvalidatedSecrets { get; } = [];
+
+        public void Invalidate(string secretName)
+        {
+            InvalidatedSecrets.Add(secretName);
+        }
+
+        public void InvalidateAll()
+        {
+            InvalidatedSecrets.Add("*");
+        }
+    }
+
+    private sealed class SharedSecretStore : ISecretStore
+    {
+        public const string SharedSecretValue = "expected-shared-secret";
+
+        public Task<SecretValue> GetSecretAsync(
+            SecretIdentifier identifier,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(new SecretValue(identifier, SharedSecretValue, "v1"));
+        }
+
+        public Task<VaultResult<SecretValue>> TryGetSecretAsync(
+            SecretIdentifier identifier,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(VaultResult.Success(new SecretValue(identifier, SharedSecretValue, "v1")));
+        }
+
+        public Task<IReadOnlyList<SecretVersion>> ListSecretVersionsAsync(
+            string secretName,
+            CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult<IReadOnlyList<SecretVersion>>([]);
+        }
     }
 }
