@@ -8,10 +8,10 @@
 
     <!-- Package Metadata -->
     <PackageId>HoneyDrunk.Web.Rest.Abstractions</PackageId>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <Authors>HoneyDrunk Studios</Authors>
     <Description>Pure contracts and constants for HoneyDrunk REST services. Provides standardized response envelopes (ApiResult, ApiErrorResponse), pagination contracts (PageRequest, PageResult), error codes, and telemetry tags. Zero runtime dependencies - can be used in any .NET project.</Description>
-    <PackageReleaseNotes>v0.2.0: Version alignment with HoneyDrunk.Web.Rest.AspNetCore 0.2.0. No API changes.</PackageReleaseNotes>
+    <PackageReleaseNotes>v0.3.0: Version alignment with HoneyDrunk.Web.Rest.AspNetCore 0.3.0. No API changes.</PackageReleaseNotes>
     <PackageTags>rest;api;contracts;response;envelope;error;pagination;validation;constants;abstractions</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>

@@ -11,6 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.0] - 2026-04-25
+
+### Added
+
+- Added ADR-0005/0006 Web.Rest bootstrap support for env-var-driven Azure Key Vault and Azure App Configuration through `AddWebRestBootstrap()`.
+- Added `/internal/vault/invalidate` endpoint mapping via `MapHoneyDrunkWebRestVaultInvalidationWebhook()` for Event Grid cache invalidation.
+- Added canary coverage for Key Vault `SecretNewVersionCreated` invalidation using `{Provider}--{Key}` secret names.
+
+### Changed
+
+- Updated `HoneyDrunk.Web.Rest.AspNetCore` to consume the Vault Azure Key Vault, App Configuration, and Event Grid provider packages.
+
 ## [0.2.0] - 2026-02-14
 
 ### Added
@@ -42,5 +54,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `RestOptions` for configurable middleware behavior
 - Fluent `AddHoneyDrunkWebRest()` service registration with Kernel and Auth integration
 
+[0.3.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.3.0
 [0.2.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.2.0
 [0.1.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.1.0
