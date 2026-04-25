@@ -69,11 +69,11 @@ public sealed record PageResult<T>
         int pageNumber,
         int pageSize,
         long totalCount) => new()
-    {
-        Items = items,
-        PageNumber = pageNumber,
-        PageSize = pageSize,
-        TotalCount = totalCount,
-    };
+        {
+            Items = items,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalCount = totalCount,
+        };
 #pragma warning restore CA1000
 }

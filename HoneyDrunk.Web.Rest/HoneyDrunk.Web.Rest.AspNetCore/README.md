@@ -162,7 +162,7 @@ app.MapDelete("/api/items/{id}", DeleteItemAsync)
 
 - HoneyDrunk.Web.Rest.Abstractions (contracts)
 - HoneyDrunk.Kernel.Abstractions 0.4.0 (optional, for Grid context and typed exceptions)
-- HoneyDrunk.Auth.AspNetCore 0.2.0 (optional, for identity context)
+- HoneyDrunk.Auth.AspNetCore 0.3.0 (optional, for identity context)
 - HoneyDrunk.Transport 0.4.0 (optional, for envelope mapping)
 - HoneyDrunk.Vault.EventGrid 0.3.0 (for cache invalidation webhook mapping)
 - HoneyDrunk.Vault.Providers.AppConfiguration 0.3.0 (for env-var-driven App Configuration bootstrap)

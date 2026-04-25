@@ -41,11 +41,11 @@ public record ApiResult<T> : ApiResult
         string message,
         string code = ApiErrorCode.GeneralError,
         string? correlationId = null) => new()
-    {
-        Status = ApiResultStatus.Failed,
-        Error = new ApiError { Code = code, Message = message },
-        CorrelationId = correlationId,
-    };
+        {
+            Status = ApiResultStatus.Failed,
+            Error = new ApiError { Code = code, Message = message },
+            CorrelationId = correlationId,
+        };
 
     /// <summary>
     /// Creates a not found <see cref="ApiResult{T}"/>.
@@ -56,11 +56,11 @@ public record ApiResult<T> : ApiResult
     public static new ApiResult<T> NotFound(
         string message = "The requested resource was not found.",
         string? correlationId = null) => new()
-    {
-        Status = ApiResultStatus.NotFound,
-        Error = new ApiError { Code = ApiErrorCode.NotFound, Message = message },
-        CorrelationId = correlationId,
-    };
+        {
+            Status = ApiResultStatus.NotFound,
+            Error = new ApiError { Code = ApiErrorCode.NotFound, Message = message },
+            CorrelationId = correlationId,
+        };
 
     /// <summary>
     /// Creates an unauthorized <see cref="ApiResult{T}"/>.
@@ -71,11 +71,11 @@ public record ApiResult<T> : ApiResult
     public static new ApiResult<T> Unauthorized(
         string message = "Authentication is required.",
         string? correlationId = null) => new()
-    {
-        Status = ApiResultStatus.Unauthorized,
-        Error = new ApiError { Code = ApiErrorCode.Unauthorized, Message = message },
-        CorrelationId = correlationId,
-    };
+        {
+            Status = ApiResultStatus.Unauthorized,
+            Error = new ApiError { Code = ApiErrorCode.Unauthorized, Message = message },
+            CorrelationId = correlationId,
+        };
 
     /// <summary>
     /// Creates a forbidden <see cref="ApiResult{T}"/>.
@@ -86,11 +86,11 @@ public record ApiResult<T> : ApiResult
     public static new ApiResult<T> Forbidden(
         string message = "You do not have permission to access this resource.",
         string? correlationId = null) => new()
-    {
-        Status = ApiResultStatus.Forbidden,
-        Error = new ApiError { Code = ApiErrorCode.Forbidden, Message = message },
-        CorrelationId = correlationId,
-    };
+        {
+            Status = ApiResultStatus.Forbidden,
+            Error = new ApiError { Code = ApiErrorCode.Forbidden, Message = message },
+            CorrelationId = correlationId,
+        };
 
     /// <summary>
     /// Creates a conflict <see cref="ApiResult{T}"/>.
@@ -101,11 +101,11 @@ public record ApiResult<T> : ApiResult
     public static new ApiResult<T> Conflict(
         string message,
         string? correlationId = null) => new()
-    {
-        Status = ApiResultStatus.Conflict,
-        Error = new ApiError { Code = ApiErrorCode.Conflict, Message = message },
-        CorrelationId = correlationId,
-    };
+        {
+            Status = ApiResultStatus.Conflict,
+            Error = new ApiError { Code = ApiErrorCode.Conflict, Message = message },
+            CorrelationId = correlationId,
+        };
 
     /// <summary>
     /// Creates an error <see cref="ApiResult{T}"/>.
@@ -116,11 +116,11 @@ public record ApiResult<T> : ApiResult
     public static new ApiResult<T> InternalError(
         string message = "An internal server error occurred.",
         string? correlationId = null) => new()
-    {
-        Status = ApiResultStatus.Error,
-        Error = new ApiError { Code = ApiErrorCode.InternalError, Message = message },
-        CorrelationId = correlationId,
-    };
+        {
+            Status = ApiResultStatus.Error,
+            Error = new ApiError { Code = ApiErrorCode.InternalError, Message = message },
+            CorrelationId = correlationId,
+        };
 
     /// <summary>
     /// Converts from a non-generic <see cref="ApiResult"/> to a generic <see cref="ApiResult{T}"/>.
