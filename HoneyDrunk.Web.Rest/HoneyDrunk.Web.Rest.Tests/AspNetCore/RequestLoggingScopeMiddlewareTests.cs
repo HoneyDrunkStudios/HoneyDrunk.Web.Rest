@@ -19,7 +19,8 @@ public sealed class RequestLoggingScopeMiddlewareTests
 {
     /// <summary>
     /// Verifies that Internal tenant contexts omit the TenantId scope entry.
-    /// </summary>`r`n    /// <returns>A task representing the asynchronous test.</returns>
+    /// </summary>
+    /// <returns>A task representing the asynchronous test.</returns>
     [Fact]
     public async Task InvokeAsync_WithInternalTenant_OmitsTenantIdScopeEntry()
     {
@@ -32,7 +33,8 @@ public sealed class RequestLoggingScopeMiddlewareTests
 
     /// <summary>
     /// Verifies that non-internal tenant contexts emit the TenantId scope entry as a ULID string.
-    /// </summary>`r`n    /// <returns>A task representing the asynchronous test.</returns>
+    /// </summary>
+    /// <returns>A task representing the asynchronous test.</returns>
     [Fact]
     public async Task InvokeAsync_WithNonInternalTenant_EmitsTenantIdScopeEntryAsUlidString()
     {
@@ -46,7 +48,8 @@ public sealed class RequestLoggingScopeMiddlewareTests
 
     /// <summary>
     /// Verifies that ProjectId scope behavior remains unchanged.
-    /// </summary>`r`n    /// <returns>A task representing the asynchronous test.</returns>
+    /// </summary>
+    /// <returns>A task representing the asynchronous test.</returns>
     [Fact]
     public async Task InvokeAsync_WithProjectId_PreservesProjectIdBehavior()
     {
@@ -62,7 +65,8 @@ public sealed class RequestLoggingScopeMiddlewareTests
 
     /// <summary>
     /// Verifies that existing scope properties continue to be emitted.
-    /// </summary>`r`n    /// <returns>A task representing the asynchronous test.</returns>
+    /// </summary>
+    /// <returns>A task representing the asynchronous test.</returns>
     [Fact]
     public async Task InvokeAsync_WithKernelContext_PreservesOtherScopeProperties()
     {

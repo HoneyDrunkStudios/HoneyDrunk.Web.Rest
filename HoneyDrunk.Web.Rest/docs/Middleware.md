@@ -1,4 +1,4 @@
-﻿# 🔄 Middleware - Request Pipeline Components
+# 🔄 Middleware - Request Pipeline Components
 
 [← Back to File Guide](FILE_GUIDE.md)
 
@@ -363,7 +363,7 @@ Kernel-derived properties (`TenantId`, `NodeId`, etc.) appear only when `HoneyDr
     "CorrelationId": "corr-456",
     "HttpMethod": "POST",
     "HttpPath": "/api/orders",
-    "TenantId": "tenant-789",
+    "TenantId": "01HZ6Y7K2V4P8Q9R0S1T2U3V4W",
     "NodeId": "order-service"
   }
 }
