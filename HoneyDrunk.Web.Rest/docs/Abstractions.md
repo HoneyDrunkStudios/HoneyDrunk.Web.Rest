@@ -703,7 +703,7 @@ public static class RestTelemetryTags
 
 Standard tag names for logging and tracing. Use these for consistent telemetry across services.
 
-> **Note:** The library's `RequestLoggingScopeMiddleware` sets: `CorrelationId`, `HttpMethod`, `HttpPath`, `RequestId`, and `TenantId` (when Kernel context is available). Other tags are standardized names provided for consistency across services.
+> **Note:** The library's `RequestLoggingScopeMiddleware` sets: `CorrelationId`, `HttpMethod`, `HttpPath`, `RequestId`, and `TenantId` (when Kernel context is available and the request is non-Internal). Other tags are standardized names provided for consistency across services.
 
 #### Usage Example
 

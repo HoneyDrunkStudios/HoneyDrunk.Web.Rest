@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.0] - 2026-05-04
+
+### Changed
+
+- Updated `HoneyDrunk.Kernel.Abstractions` from 0.4.0 to 0.5.0 for typed `TenantId` context adoption.
+- Updated `HoneyDrunk.Transport` from 0.4.0 to 0.5.0.
+- `RequestLoggingScopeMiddleware` now omits the `TenantId` log-scope property for Internal-tenant requests and emits the sanitized ULID string for non-Internal requests.
+
 ## [0.3.0] - 2026-04-25
 
 ### Added
@@ -54,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `RestOptions` for configurable middleware behavior
 - Fluent `AddHoneyDrunkWebRest()` service registration with Kernel and Auth integration
 
+[0.4.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.4.0
 [0.3.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.3.0
 [0.2.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.2.0
 [0.1.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.1.0

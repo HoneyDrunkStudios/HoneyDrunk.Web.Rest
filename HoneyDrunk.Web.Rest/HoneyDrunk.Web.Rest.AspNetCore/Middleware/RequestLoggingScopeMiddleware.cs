@@ -93,10 +93,10 @@ public sealed class RequestLoggingScopeMiddleware(
             scopeState["CausationId"] = LogValueSanitizer.Sanitize(operationContext.CausationId);
         }
 
-        // Add tenant/project context
-        if (!string.IsNullOrWhiteSpace(operationContext.TenantId))
+        // Add tenant context for non-internal traffic.
+        if (!operationContext.TenantId.IsInternal)
         {
-            scopeState[RestTelemetryTags.TenantId] = LogValueSanitizer.Sanitize(operationContext.TenantId);
+            scopeState[RestTelemetryTags.TenantId] = LogValueSanitizer.Sanitize(operationContext.TenantId.ToString());
         }
 
         if (!string.IsNullOrWhiteSpace(operationContext.ProjectId))

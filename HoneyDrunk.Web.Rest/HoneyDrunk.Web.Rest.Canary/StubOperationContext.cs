@@ -1,4 +1,5 @@
 using HoneyDrunk.Kernel.Abstractions.Context;
+using HoneyDrunk.Kernel.Abstractions.Identity;
 
 namespace HoneyDrunk.Web.Rest.Canary;
 
@@ -24,7 +25,7 @@ internal sealed class StubOperationContext(string correlationId) : IOperationCon
     public string? CausationId => null;
 
     /// <inheritdoc/>
-    public string? TenantId => null;
+    public TenantId TenantId => TenantId.Internal;
 
     /// <inheritdoc/>
     public string? ProjectId => null;

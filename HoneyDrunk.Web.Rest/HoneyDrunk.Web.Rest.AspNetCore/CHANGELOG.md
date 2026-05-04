@@ -5,6 +5,19 @@ All notable changes to HoneyDrunk.Web.Rest.AspNetCore will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-05-04
+
+### Changed
+
+#### Middleware
+- `RequestLoggingScopeMiddleware` now reads Kernel's typed `TenantId` and omits the `TenantId` log-scope property for Internal-tenant requests.
+- Non-Internal tenant requests continue to emit `TenantId` as the sanitized ULID string.
+- `ProjectId` and the remaining Kernel scope properties are unchanged.
+
+#### Dependencies
+- Bumped `HoneyDrunk.Kernel.Abstractions` from 0.4.0 to 0.5.0.
+- Bumped `HoneyDrunk.Transport` from 0.4.0 to 0.5.0.
+
 ## [0.3.0] - 2026-04-25
 
 ### Added
@@ -143,6 +156,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Kernel/Auth/Transport integrations are optional - middleware gracefully degrades when not registered
 - Auth failure shaping uses `IAuthorizationMiddlewareResultHandler` for scheme-agnostic 401/403 handling
 
+[0.4.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.4.0
 [0.3.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.3.0
 [0.2.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.2.0
 [0.1.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.1.0
