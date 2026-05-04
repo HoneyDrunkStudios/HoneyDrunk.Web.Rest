@@ -1,4 +1,4 @@
-﻿# 🔄 Middleware - Request Pipeline Components
+# 🔄 Middleware - Request Pipeline Components
 
 [← Back to File Guide](FILE_GUIDE.md)
 
@@ -307,7 +307,7 @@ Enriches the logging scope with correlation ID, request metadata, and Kernel con
 | `TraceId` | `Activity.Current?.Id` | OpenTelemetry trace ID |
 | `OperationId` | `IOperationContext` | Kernel operation ID (if available) |
 | `OperationName` | `IOperationContext` | Kernel operation name (if available) |
-| `TenantId` | `IOperationContext` | Tenant ID (if available) |
+| `TenantId` | `IOperationContext` | Tenant ID (non-Internal requests only) |
 | `NodeId` | `IGridContext` | Grid node ID (if available) |
 | `StudioId` | `IGridContext` | Studio ID (if available) |
 | `Environment` | `IGridContext` | Environment name (if available) |
@@ -342,7 +342,7 @@ public class OrderService
         // - CorrelationId: "corr-456"
         // - HttpMethod: "POST"
         // - HttpPath: "/api/orders"
-        // - TenantId: "tenant-789" (if Kernel registered)
+        // - TenantId: "01H..." (if Kernel registered and request is non-Internal)
         // - NodeId: "order-service" (if Kernel registered)
         // - OrderId: "abc-123"
     }
@@ -351,7 +351,7 @@ public class OrderService
 
 ### Structured Log Output
 
-Kernel-derived properties (`TenantId`, `NodeId`, etc.) appear only when `HoneyDrunk.Kernel` is registered and `IOperationContextAccessor` provides a current context.
+Kernel-derived properties (`TenantId`, `NodeId`, etc.) appear only when `HoneyDrunk.Kernel` is registered and `IOperationContextAccessor` provides a current context. `TenantId` appears only for non-Internal requests; Internal-tenant traffic is represented by the absence of the property.
 
 ```json
 {
@@ -363,7 +363,7 @@ Kernel-derived properties (`TenantId`, `NodeId`, etc.) appear only when `HoneyDr
     "CorrelationId": "corr-456",
     "HttpMethod": "POST",
     "HttpPath": "/api/orders",
-    "TenantId": "tenant-789",
+    "TenantId": "01HZ6Y7K2V4P8Q9R0S1T2U3V4W",
     "NodeId": "order-service"
   }
 }

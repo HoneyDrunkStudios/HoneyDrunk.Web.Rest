@@ -1,4 +1,5 @@
 using HoneyDrunk.Kernel.Abstractions.Context;
+using HoneyDrunk.Kernel.Abstractions.Identity;
 
 namespace HoneyDrunk.Web.Rest.Canary;
 
@@ -28,7 +29,7 @@ internal sealed class StubGridContext : IGridContext
     public string Environment => "test";
 
     /// <inheritdoc/>
-    public string? TenantId => null;
+    public TenantId TenantId => TenantId.Internal;
 
     /// <inheritdoc/>
     public string? ProjectId => null;

@@ -69,6 +69,7 @@ When `HoneyDrunk.Kernel` is registered, the middleware automatically:
   - `OperationId`, `OperationName`, `CausationId`
   - `TenantId`, `ProjectId`
   - `NodeId`, `StudioId`, `Environment` (from `IGridContext`)
+- Emits `TenantId` only for non-Internal requests; Internal-tenant traffic is represented by the absence of the property.
 
 ### Auth Integration
 
@@ -161,9 +162,9 @@ app.MapDelete("/api/items/{id}", DeleteItemAsync)
 ## Dependencies
 
 - HoneyDrunk.Web.Rest.Abstractions (contracts)
-- HoneyDrunk.Kernel.Abstractions 0.4.0 (optional, for Grid context and typed exceptions)
+- HoneyDrunk.Kernel.Abstractions 0.5.0 (optional, for Grid context and typed exceptions)
 - HoneyDrunk.Auth.AspNetCore 0.3.0 (optional, for identity context)
-- HoneyDrunk.Transport 0.4.0 (optional, for envelope mapping)
+- HoneyDrunk.Transport 0.5.0 (optional, for envelope mapping)
 - HoneyDrunk.Vault.EventGrid 0.3.0 (for cache invalidation webhook mapping)
 - HoneyDrunk.Vault.Providers.AppConfiguration 0.3.0 (for env-var-driven App Configuration bootstrap)
 - HoneyDrunk.Vault.Providers.AzureKeyVault 0.3.0 (for env-var-driven Key Vault bootstrap)
