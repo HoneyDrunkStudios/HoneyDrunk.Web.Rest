@@ -123,11 +123,16 @@ internal sealed class CanaryHostFactory : IDisposable
                             accessor.Current = new StubOperationContext(correlationId);
                         }
 
-                        await next(context).ConfigureAwait(false);
-
-                        if (createdContext)
+                        try
                         {
-                            accessor.Current = null;
+                            await next(context).ConfigureAwait(false);
+                        }
+                        finally
+                        {
+                            if (createdContext)
+                            {
+                                accessor.Current = null;
+                            }
                         }
                     });
 

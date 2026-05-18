@@ -79,14 +79,17 @@ Central configuration for all REST middleware and filters. Configure once during
 
 ### Usage Examples
 
+All `AddRest()` examples assume Kernel services are registered first with `AddHoneyDrunkNode()`, and the request pipeline calls `UseGridContext()` before `UseRest()`.
+
 #### Full Configuration
 
 ```csharp
+builder.Services.AddHoneyDrunkNode(options => { /* node identity */ });
 builder.Services.AddRest(options =>
 {
-    // Correlation ID (sourced from Kernel request context)
+    // Correlation ID (required from Kernel request context)
     options.CorrelationIdHeaderName = "X-Correlation-Id";
-    options.GenerateCorrelationIdIfMissing = true; // Legacy option
+    options.GenerateCorrelationIdIfMissing = true; // Legacy option; Kernel supplies the value
     options.ReturnCorrelationIdInResponseHeader = true;
     
     // Error handling

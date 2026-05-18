@@ -72,8 +72,15 @@ public sealed class TestApiFactory : IDisposable
                             : Guid.NewGuid().ToString("N");
 
                         accessor.Current = new TestOperationContext(correlationId);
-                        await next(context).ConfigureAwait(false);
-                        accessor.Current = null;
+
+                        try
+                        {
+                            await next(context).ConfigureAwait(false);
+                        }
+                        finally
+                        {
+                            accessor.Current = null;
+                        }
                     });
 
                     app.UseRest();
