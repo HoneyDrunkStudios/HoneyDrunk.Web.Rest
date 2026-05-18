@@ -5,6 +5,24 @@ All notable changes to HoneyDrunk.Web.Rest.AspNetCore will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-05-18
+
+### Changed
+
+#### Middleware
+- `CorrelationMiddleware` now requires a live Kernel `IOperationContext` for each request and uses `IOperationContext.CorrelationId` as the only correlation source.
+- Incoming correlation headers are still compared to Kernel context for mismatch warnings, but Web.Rest no longer falls back to headers or generated IDs when Kernel context is missing.
+
+#### Dependency Injection
+- `AddRest()` now fails fast unless Kernel request context services have already been registered via `AddHoneyDrunkNode()`.
+- Applications must place `UseGridContext()` before `UseRest()` so Web.Rest sees a live request operation context.
+
+#### Dependencies
+- Bumped `HoneyDrunk.Kernel.Abstractions` from 0.5.0 to 0.7.0.
+- Bumped `HoneyDrunk.Auth.AspNetCore` from 0.3.0 to 0.4.0.
+- Bumped `HoneyDrunk.Transport` from 0.5.0 to 0.6.0.
+- Bumped `HoneyDrunk.Vault.EventGrid`, `HoneyDrunk.Vault.Providers.AppConfiguration`, and `HoneyDrunk.Vault.Providers.AzureKeyVault` from 0.3.0 to 0.5.0.
+
 ## [0.4.0] - 2026-05-04
 
 ### Changed
@@ -74,7 +92,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `IncludeExceptionDetails` - Stack traces in errors (default: false)
   - `IncludeTraceId` - OpenTelemetry trace ID in responses (default: true)
   - `ReturnCorrelationIdInResponseHeader` - Echo correlation ID back (default: true)
-  - `GenerateCorrelationIdIfMissing` - Auto-generate if not provided (default: true)
+  - `GenerateCorrelationIdIfMissing` - Legacy option retained for compatibility (default: true)
   - `EnableRequestLoggingScope` - Logging scope enrichment (default: true)
   - `EnableExceptionMapping` - Exception-to-error mapping (default: true)
   - `EnableModelStateValidationFilter` - MVC validation filter (default: true)
@@ -82,17 +100,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `EnableAuthFailureShaping` - Shape 401/403 as ApiErrorResponse (default: true)
 
 #### Middleware
-- `CorrelationMiddleware` - Extracts/generates correlation ID with priority:
-  1. Kernel `IOperationContext.CorrelationId` (if `IOperationContextAccessor` is registered)
-  2. Incoming `X-Correlation-Id` header
-  3. Generated GUID
+- `CorrelationMiddleware` - Requires live Kernel `IOperationContext.CorrelationId`; incoming `X-Correlation-Id` is compared for mismatch warnings only.
 - `ExceptionMappingMiddleware` - Catches unhandled exceptions, maps to `ApiErrorResponse` with appropriate HTTP status codes
 - `RequestLoggingScopeMiddleware` - Enriches logging scope with:
   - Correlation ID, HTTP method, path, request ID, trace ID
   - Kernel context (if available): OperationId, OperationName, CausationId, TenantId, ProjectId, NodeId, StudioId, Environment
 
 #### Kernel Integration
-- Uses `HoneyDrunk.Kernel.Abstractions.Context.IOperationContextAccessor` when registered
+- Requires `HoneyDrunk.Kernel.Abstractions.Context.IOperationContextAccessor` and a live current operation context
 - Prefers `IOperationContext.CorrelationId` over request headers
 - Enriches logging scope with `IGridContext` values (NodeId, StudioId, Environment)
 
@@ -153,9 +168,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Model state validation filter suppresses default ASP.NET Core validation behavior
 - JSON defaults are automatically applied to MVC JsonOptions
 - All middleware respects configuration toggles
-- Kernel/Auth/Transport integrations are optional - middleware gracefully degrades when not registered
+- Kernel request context is required for Web.Rest correlation; Auth and Transport integrations remain optional.
 - Auth failure shaping uses `IAuthorizationMiddlewareResultHandler` for scheme-agnostic 401/403 handling
 
+[0.5.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.5.0
 [0.4.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.4.0
 [0.3.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.3.0
 [0.2.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.2.0

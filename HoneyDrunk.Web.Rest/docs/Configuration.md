@@ -57,7 +57,7 @@ Central configuration for all REST middleware and filters. Configure once during
 | Property | Default | Description |
 |----------|---------|-------------|
 | `CorrelationIdHeaderName` | `"X-Correlation-Id"` | HTTP header name for correlation ID |
-| `GenerateCorrelationIdIfMissing` | `true` | Generate new GUID if header not present |
+| `GenerateCorrelationIdIfMissing` | `true` | Legacy option; Web.Rest correlation now comes from Kernel request context |
 | `ReturnCorrelationIdInResponseHeader` | `true` | Include correlation ID in response headers |
 
 #### Error Handling Settings
@@ -79,14 +79,17 @@ Central configuration for all REST middleware and filters. Configure once during
 
 ### Usage Examples
 
+All `AddRest()` examples assume Kernel services are registered first with `AddHoneyDrunkNode()`, and the request pipeline calls `UseGridContext()` before `UseRest()`.
+
 #### Full Configuration
 
 ```csharp
+builder.Services.AddHoneyDrunkNode(options => { /* node identity */ });
 builder.Services.AddRest(options =>
 {
-    // Correlation ID
+    // Correlation ID (required from Kernel request context)
     options.CorrelationIdHeaderName = "X-Correlation-Id";
-    options.GenerateCorrelationIdIfMissing = true;
+    options.GenerateCorrelationIdIfMissing = true; // Legacy option; Kernel supplies the value
     options.ReturnCorrelationIdInResponseHeader = true;
     
     // Error handling

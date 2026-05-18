@@ -55,24 +55,23 @@ public sealed class CorrelationMiddleware
 
 ### Purpose
 
-Extracts correlation ID from incoming request headers, Kernel operation context, or generates a new one. Stores the ID in `ICorrelationIdAccessor` for use throughout the request lifecycle and optionally adds it to response headers.
+Requires the correlation ID from the live Kernel operation context. Stores the ID in `ICorrelationIdAccessor` for use throughout the request lifecycle and optionally adds it to response headers.
 
 ### Behavior
 
-1. **Check Kernel context** - Uses `IOperationContext.CorrelationId` if `IOperationContextAccessor` is registered
-2. **Check incoming header** - Looks for `X-Correlation-Id` (configurable)
-3. **Compare sources** - If both Kernel and header values are present and differ, logs a warning with both values, HTTP method, and request path
-4. **Generate if missing** - Uses `Activity.Current?.Id` if available, otherwise creates a new GUID
+1. **Require Kernel context** - Uses `IOperationContext.CorrelationId` from the live Kernel request context
+2. **Check incoming header** - Looks for `X-Correlation-Id` (configurable) only to detect mismatches
+3. **Compare sources** - If Kernel and header values differ, logs a warning with both values, HTTP method, and request path
+4. **Fail fast if missing** - Throws when Kernel context or its correlation ID is absent
 5. **Store in accessor** - Makes ID available via `ICorrelationIdAccessor`
 6. **Store in HttpContext.Items** - Uses `HeaderNames.CorrelationId` constant
 7. **Add to response header** - Returns correlation ID to caller
 
 ### Correlation ID Priority (highest to lowest)
 
-1. **Kernel `IOperationContext.CorrelationId`** - If `IOperationContextAccessor` is registered and has a current context
-2. **Incoming `X-Correlation-Id` header** - From the request
-3. **`Activity.Current?.Id`** - If available (from distributed tracing)
-4. **Generated GUID** - If `GenerateCorrelationIdIfMissing = true`
+1. **Kernel `IOperationContext.CorrelationId`** - From the live Kernel request context
+2. **Incoming `X-Correlation-Id` header** - Compared for mismatch warnings only
+3. **Missing Kernel context** - Fails fast instead of fabricating request correlation
 
 ### Configuration
 
@@ -80,7 +79,7 @@ Extracts correlation ID from incoming request headers, Kernel operation context,
 services.AddRest(options =>
 {
     options.CorrelationIdHeaderName = "X-Correlation-Id";     // Header name
-    options.GenerateCorrelationIdIfMissing = true;            // Auto-generate
+    options.GenerateCorrelationIdIfMissing = true;            // Legacy option; Kernel supplies correlation
     options.ReturnCorrelationIdInResponseHeader = true;       // Echo back
 });
 ```
@@ -118,10 +117,10 @@ Request:
     │
     ▼
 CorrelationMiddleware:
-  - Checks IOperationContextAccessor (if registered)
-  - Falls back to extracting "client-abc-123" from header
-  - Sets ICorrelationIdAccessor.CorrelationId = "client-abc-123"
-  - Sets HttpContext.Items[HeaderNames.CorrelationId] = "client-abc-123"
+  - Requires IOperationContextAccessor.Current.CorrelationId
+  - Logs a mismatch if the incoming header differs
+  - Sets ICorrelationIdAccessor.CorrelationId to the Kernel correlation ID
+  - Sets HttpContext.Items[HeaderNames.CorrelationId] to the Kernel correlation ID
   - Registers response callback to add header
     │
     ▼
@@ -289,7 +288,7 @@ Enriches the logging scope with correlation ID, request metadata, and Kernel con
 1. **Create logging scope** - Adds properties to scope
 2. **Include correlation ID** - From `ICorrelationIdAccessor`
 3. **Include request metadata** - HTTP method, path, request ID, trace ID
-4. **Include Kernel context** - If `IOperationContextAccessor` is registered:
+4. **Include Kernel context** - From the live Kernel request context:
    - OperationId, OperationName, CausationId
    - TenantId, ProjectId
    - NodeId, StudioId, Environment (from IGridContext)

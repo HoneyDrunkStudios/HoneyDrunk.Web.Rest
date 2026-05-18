@@ -96,6 +96,9 @@ using HoneyDrunk.Web.Rest.AspNetCore.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Register Kernel first so Web.Rest has a live request context
+builder.Services.AddHoneyDrunkNode(options => { /* node identity */ });
+
 // Register REST services
 builder.Services.AddRest(options =>
 {
@@ -110,7 +113,8 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Add REST middleware early in the pipeline
+// Establish Kernel request context before REST middleware
+app.UseGridContext();
 app.UseRest();
 
 app.MapControllers();
@@ -334,9 +338,9 @@ services.AddRest(options =>
     options.IncludeExceptionDetails = false;        // Stack traces in errors (dev only)
     options.IncludeTraceId = true;                  // OpenTelemetry trace ID
     
-    // Correlation ID
+    // Correlation ID (required from Kernel request context)
     options.CorrelationIdHeaderName = "X-Correlation-Id";
-    options.GenerateCorrelationIdIfMissing = true;
+    options.GenerateCorrelationIdIfMissing = true; // Legacy option; Kernel supplies the value
     options.ReturnCorrelationIdInResponseHeader = true;
     
     // JSON
@@ -344,13 +348,13 @@ services.AddRest(options =>
 });
 ```
 
-### Optional Integrations
+### Integrations
 
-When registered, the middleware automatically uses:
+Web.Rest requires Kernel request context and can optionally use nearby Core integrations:
 
-- **HoneyDrunk.Kernel** - `IOperationContextAccessor` for correlation and logging enrichment
-- **HoneyDrunk.Auth.AspNetCore** - `IAuthenticatedIdentityAccessor` for context-aware auth errors
-- **HoneyDrunk.Transport** - `ITransportEnvelope.ToApiResult()` extension methods
+- **HoneyDrunk.Kernel** - required `IOperationContextAccessor` for correlation and logging enrichment
+- **HoneyDrunk.Auth.AspNetCore** - optional `IAuthenticatedIdentityAccessor` for context-aware auth errors
+- **HoneyDrunk.Transport** - optional `ITransportEnvelope.ToApiResult()` extension methods
 
 ---
 
@@ -361,7 +365,7 @@ When registered, the middleware automatically uses:
 - **System.Text.Json** - JSON serialization
 - **Microsoft.AspNetCore.*** - ASP.NET Core runtime (AspNetCore package only)
 - **Microsoft.Extensions.*** - DI, Logging, Configuration
-- **HoneyDrunk.Kernel.Abstractions** - Optional, for Grid context
+- **HoneyDrunk.Kernel.Abstractions** - Required, for request context
 - **HoneyDrunk.Auth.AspNetCore** - Optional, for identity context
 - **HoneyDrunk.Transport** - Optional, for envelope mapping
 
@@ -383,7 +387,7 @@ Applications using HoneyDrunk.Web.Rest:
 - [AspNetCore README](../HoneyDrunk.Web.Rest.AspNetCore/README.md) - Middleware documentation
 
 ### Related Projects
-- [HoneyDrunk.Kernel](https://github.com/HoneyDrunkStudios/HoneyDrunk.Kernel) - Core Grid primitives (optional integration)
+- [HoneyDrunk.Kernel](https://github.com/HoneyDrunkStudios/HoneyDrunk.Kernel) - Required Core Grid primitives
 - [HoneyDrunk.Auth](https://github.com/HoneyDrunkStudios/HoneyDrunk.Auth) - Authentication and authorization (optional integration)
 - [HoneyDrunk.Transport](https://github.com/HoneyDrunkStudios/HoneyDrunk.Transport) - Messaging infrastructure (optional integration)
 - [HoneyDrunk.Data](https://github.com/HoneyDrunkStudios/HoneyDrunk.Data) - Persistence conventions

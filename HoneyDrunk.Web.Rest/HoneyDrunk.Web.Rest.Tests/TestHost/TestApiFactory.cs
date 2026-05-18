@@ -1,3 +1,5 @@
+using HoneyDrunk.Kernel.Abstractions.Context;
+using HoneyDrunk.Kernel.Abstractions.Identity;
 using HoneyDrunk.Web.Rest.AspNetCore.Extensions;
 using HoneyDrunk.Web.Rest.AspNetCore.Serialization;
 using Microsoft.AspNetCore.Builder;
@@ -39,6 +41,8 @@ public sealed class TestApiFactory : IDisposable
                 webBuilder.UseTestServer();
                 webBuilder.ConfigureServices(services =>
                 {
+                    services.AddSingleton<IOperationContextAccessor>(new TestOperationContextAccessor());
+
                     services.AddRest(options =>
                     {
                         options.IncludeExceptionDetails = IncludeExceptionDetails;
@@ -59,6 +63,26 @@ public sealed class TestApiFactory : IDisposable
 
                 webBuilder.Configure(app =>
                 {
+                    app.Use(async (context, next) =>
+                    {
+                        IOperationContextAccessor accessor = context.RequestServices.GetRequiredService<IOperationContextAccessor>();
+                        string correlationId = context.Request.Headers.TryGetValue("X-Correlation-Id", out Microsoft.Extensions.Primitives.StringValues headerValue)
+                            && !string.IsNullOrWhiteSpace(headerValue.ToString())
+                            ? headerValue.ToString()
+                            : Guid.NewGuid().ToString("N");
+
+                        accessor.Current = new TestOperationContext(correlationId);
+
+                        try
+                        {
+                            await next(context).ConfigureAwait(false);
+                        }
+                        finally
+                        {
+                            accessor.Current = null;
+                        }
+                    });
+
                     app.UseRest();
                     app.UseRouting();
 
@@ -80,5 +104,82 @@ public sealed class TestApiFactory : IDisposable
     {
         _client?.Dispose();
         _host?.Dispose();
+    }
+
+    private sealed class TestOperationContextAccessor : IOperationContextAccessor
+    {
+        public IOperationContext? Current { get; set; }
+    }
+
+    private sealed class TestOperationContext(string correlationId) : IOperationContext
+    {
+        public IGridContext GridContext { get; } = new TestGridContext(correlationId);
+
+        public string OperationName => "test-request";
+
+        public string OperationId => "test-operation-id";
+
+        public string CorrelationId => GridContext.CorrelationId;
+
+        public string? CausationId => null;
+
+        public TenantId TenantId => TenantId.Internal;
+
+        public string? ProjectId => null;
+
+        public DateTimeOffset StartedAtUtc { get; } = DateTimeOffset.UtcNow;
+
+        public DateTimeOffset? CompletedAtUtc => null;
+
+        public bool? IsSuccess => null;
+
+        public string? ErrorMessage => null;
+
+        public IReadOnlyDictionary<string, object?> Metadata { get; } = new Dictionary<string, object?>();
+
+        public void Complete()
+        {
+        }
+
+        public void Fail(string errorMessage, Exception? exception = null)
+        {
+        }
+
+        public void AddMetadata(string key, object? value)
+        {
+        }
+
+        public void Dispose()
+        {
+        }
+    }
+
+    private sealed class TestGridContext(string correlationId) : IGridContext
+    {
+        public bool IsInitialized => true;
+
+        public string CorrelationId => correlationId;
+
+        public string? CausationId => null;
+
+        public string NodeId => "test-node";
+
+        public string StudioId => "test-studio";
+
+        public string Environment => "test";
+
+        public TenantId TenantId => TenantId.Internal;
+
+        public string? ProjectId => null;
+
+        public CancellationToken Cancellation => CancellationToken.None;
+
+        public IReadOnlyDictionary<string, string> Baggage { get; } = new Dictionary<string, string>();
+
+        public DateTimeOffset CreatedAtUtc { get; } = DateTimeOffset.UtcNow;
+
+        public void AddBaggage(string key, string value)
+        {
+        }
     }
 }

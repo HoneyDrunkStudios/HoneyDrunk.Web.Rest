@@ -1,4 +1,4 @@
-﻿# 🏛️ Architecture - Layer Responsibilities and Design
+# 🏛️ Architecture - Layer Responsibilities and Design
 
 [← Back to File Guide](FILE_GUIDE.md)
 
@@ -95,7 +95,7 @@ public class OrderResponse
 **Dependencies:** 
 - `HoneyDrunk.Web.Rest.Abstractions`
 - `Microsoft.AspNetCore.App` (framework reference)
-- `HoneyDrunk.Kernel.Abstractions` (optional, for Grid context)
+- `HoneyDrunk.Kernel.Abstractions` (required, for request context)
 - `HoneyDrunk.Auth.AspNetCore` (optional, for identity context)
 - `HoneyDrunk.Transport` (optional, uses `HoneyDrunk.Transport.Abstractions` namespace types for envelope mapping only)
 
@@ -106,7 +106,9 @@ public class OrderResponse
 
 ```csharp
 // Requires ASP.NET Core
+builder.Services.AddHoneyDrunkNode(options => { /* node identity */ });
 builder.Services.AddRest();
+app.UseGridContext();
 app.UseRest();
 ```
 
@@ -165,7 +167,7 @@ app.UseRest();
 2. **AspNetCore depends on Abstractions** - Uses contracts for implementation
 3. **Applications depend on AspNetCore** - For full functionality
 4. **Client libraries depend on Abstractions only** - For contract definitions
-5. **Kernel/Auth/Transport are optional** - Middleware gracefully degrades when not registered
+5. **Kernel request context is required** - Web.Rest requires Kernel request context for correlation; Auth and Transport integrations remain optional
 
 [↑ Back to top](#table-of-contents)
 
@@ -431,11 +433,15 @@ app.Use(async (context, next) =>
 ### Pattern 4: Minimal API Only
 
 ```csharp
-// Skip MVC filter, use minimal APIs
+// Web.Rest still requires Kernel request context, even for minimal APIs.
+builder.Services.AddHoneyDrunkNode(options => { /* node identity */ });
 builder.Services.AddRest(options =>
 {
     options.EnableModelStateValidationFilter = false; // Not needed
 });
+
+app.UseGridContext();
+app.UseRest();
 
 app.MapGet("/orders/{id}", (Guid id) =>
 {
@@ -447,11 +453,14 @@ app.MapGet("/orders/{id}", (Guid id) =>
 ### Pattern 5: With Kernel Integration
 
 ```csharp
-// When HoneyDrunk.Kernel is registered, correlation prefers IOperationContext
-// Register Kernel services so IOperationContextAccessor is available
-builder.Services.AddSingleton<IOperationContextAccessor, OperationContextAccessor>();
+// Web.Rest requires Kernel services and live request context.
+builder.Services.AddHoneyDrunkNode(options => { /* node identity */ });
 builder.Services.AddRest();
 
+app.UseGridContext();
+app.UseRest();
+
 // Middleware will:
-// 1. Use IOperationContext.CorrelationId if available
+// 1. Require IOperationContext.CorrelationId
 // 2. Enrich logging scope with Grid context values
+```

@@ -8,13 +8,13 @@ namespace HoneyDrunk.Web.Rest.Canary;
 /// Used by <see cref="StubOperationContext"/> to satisfy RequestLoggingScopeMiddleware
 /// which accesses GridContext properties for telemetry enrichment.
 /// </summary>
-internal sealed class StubGridContext : IGridContext
+internal sealed class StubGridContext(string correlationId = "canary-stub-correlation") : IGridContext
 {
     /// <inheritdoc/>
     public bool IsInitialized => true;
 
     /// <inheritdoc/>
-    public string CorrelationId => string.Empty;
+    public string CorrelationId => correlationId;
 
     /// <inheritdoc/>
     public string? CausationId => null;

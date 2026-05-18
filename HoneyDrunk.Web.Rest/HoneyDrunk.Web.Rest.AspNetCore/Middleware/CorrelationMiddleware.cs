@@ -4,17 +4,15 @@ using HoneyDrunk.Web.Rest.AspNetCore.Configuration;
 using HoneyDrunk.Web.Rest.AspNetCore.Context;
 using HoneyDrunk.Web.Rest.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Diagnostics;
 
 namespace HoneyDrunk.Web.Rest.AspNetCore.Middleware;
 
 /// <summary>
 /// Middleware that handles correlation ID propagation.
-/// Reads the correlation ID from the incoming request header or Kernel operation context,
-/// generates one if missing, and returns it in the response header.
+/// Requires a live Kernel operation context, mirrors its correlation ID into Web.Rest accessors,
+/// and returns it in the response header.
 /// </summary>
 /// <remarks>
 /// Initializes a new instance of the <see cref="CorrelationMiddleware"/> class.
@@ -32,15 +30,14 @@ public sealed class CorrelationMiddleware(RequestDelegate next, IOptions<RestOpt
     /// </summary>
     /// <param name="context">The HTTP context.</param>
     /// <param name="correlationIdAccessor">The correlation ID accessor.</param>
+    /// <param name="operationContextAccessor">The Kernel operation context accessor.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
     public async Task InvokeAsync(
         HttpContext context,
-        ICorrelationIdAccessor correlationIdAccessor)
+        ICorrelationIdAccessor correlationIdAccessor,
+        IOperationContextAccessor operationContextAccessor)
     {
-        // Try to get Kernel operation context accessor if available
-        IOperationContextAccessor? operationContextAccessor = context.RequestServices.GetService<IOperationContextAccessor>();
-
-        string correlationId = GetOrCreateCorrelationId(context, operationContextAccessor);
+        string correlationId = GetCorrelationId(context, operationContextAccessor);
 
         correlationIdAccessor.SetCorrelationId(correlationId);
 
@@ -63,18 +60,17 @@ public sealed class CorrelationMiddleware(RequestDelegate next, IOptions<RestOpt
         await _next(context).ConfigureAwait(false);
     }
 
-    private string GetOrCreateCorrelationId(HttpContext context, IOperationContextAccessor? operationContextAccessor)
+    private string GetCorrelationId(HttpContext context, IOperationContextAccessor operationContextAccessor)
     {
-        string? kernelCorrelationId = null;
+        IOperationContext operationContext = operationContextAccessor.Current
+            ?? throw new InvalidOperationException(
+                "HoneyDrunk.Web.Rest requires a live Kernel IOperationContext for each request. "
+                + "Register HoneyDrunk.Kernel with AddHoneyDrunkNode() and place UseGridContext() before UseRest().");
 
-        // Priority 1: Kernel operation context (if available and has a correlation ID)
-        if (operationContextAccessor?.Current is { } operationContext &&
-            !string.IsNullOrWhiteSpace(operationContext.CorrelationId))
-        {
-            kernelCorrelationId = operationContext.CorrelationId;
-        }
+        string kernelCorrelationId = !string.IsNullOrWhiteSpace(operationContext.CorrelationId)
+            ? operationContext.CorrelationId
+            : throw new InvalidOperationException("HoneyDrunk.Web.Rest requires Kernel IOperationContext.CorrelationId to be populated.");
 
-        // Check for incoming request header
         string? headerCorrelationId = null;
         if (context.Request.Headers.TryGetValue(_options.CorrelationIdHeaderName, out Microsoft.Extensions.Primitives.StringValues headerValue)
             && !string.IsNullOrWhiteSpace(headerValue.ToString()))
@@ -82,8 +78,7 @@ public sealed class CorrelationMiddleware(RequestDelegate next, IOptions<RestOpt
             headerCorrelationId = headerValue.ToString();
         }
 
-        // Log warning if both exist and differ
-        if (kernelCorrelationId is not null && headerCorrelationId is not null
+        if (headerCorrelationId is not null
             && !string.Equals(kernelCorrelationId, headerCorrelationId, StringComparison.Ordinal))
         {
             logger.LogWarning(
@@ -95,24 +90,6 @@ public sealed class CorrelationMiddleware(RequestDelegate next, IOptions<RestOpt
                 LogValueSanitizer.Sanitize(context.Request.Path.Value));
         }
 
-        // Priority 1: Kernel wins
-        if (kernelCorrelationId is not null)
-        {
-            return kernelCorrelationId;
-        }
-
-        // Priority 2: Incoming request header
-        if (headerCorrelationId is not null)
-        {
-            return headerCorrelationId;
-        }
-
-        // Priority 3: Generate a new one if allowed
-        if (!_options.GenerateCorrelationIdIfMissing)
-        {
-            return string.Empty;
-        }
-
-        return Activity.Current?.Id ?? Guid.NewGuid().ToString("N");
+        return kernelCorrelationId;
     }
 }

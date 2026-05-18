@@ -1,3 +1,4 @@
+using HoneyDrunk.Kernel.Abstractions.Context;
 using HoneyDrunk.Web.Rest.AspNetCore.Auth;
 using HoneyDrunk.Web.Rest.AspNetCore.Configuration;
 using HoneyDrunk.Web.Rest.AspNetCore.Context;
@@ -26,6 +27,7 @@ public static class ServiceCollectionExtensions
         Action<RestOptions>? configure = null)
     {
         ArgumentNullException.ThrowIfNull(services);
+        EnsureKernelRequestContextRegistered(services);
 
         services.TryAddSingleton<ICorrelationIdAccessor, CorrelationIdAccessor>();
 
@@ -68,5 +70,17 @@ public static class ServiceCollectionExtensions
         }
 
         return services;
+    }
+
+    private static void EnsureKernelRequestContextRegistered(IServiceCollection services)
+    {
+        if (services.Any(static descriptor => descriptor.ServiceType == typeof(IOperationContextAccessor)))
+        {
+            return;
+        }
+
+        throw new InvalidOperationException(
+            "AddRest() requires HoneyDrunk.Kernel request context services. "
+            + "Call AddHoneyDrunkNode() before AddRest(), then place UseGridContext() before UseRest() in the request pipeline.");
     }
 }
