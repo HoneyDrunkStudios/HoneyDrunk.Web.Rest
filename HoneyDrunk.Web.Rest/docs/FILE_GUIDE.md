@@ -334,9 +334,9 @@ services.AddRest(options =>
     options.IncludeExceptionDetails = false;        // Stack traces in errors (dev only)
     options.IncludeTraceId = true;                  // OpenTelemetry trace ID
     
-    // Correlation ID
+    // Correlation ID (sourced from Kernel request context)
     options.CorrelationIdHeaderName = "X-Correlation-Id";
-    options.GenerateCorrelationIdIfMissing = true;
+    options.GenerateCorrelationIdIfMissing = true; // Legacy option
     options.ReturnCorrelationIdInResponseHeader = true;
     
     // JSON

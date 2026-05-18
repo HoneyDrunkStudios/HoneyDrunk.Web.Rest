@@ -7,6 +7,13 @@ Middleware, filters, and endpoint helpers that enforce HoneyDrunk REST conventio
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
 
+// Add Kernel first so Web.Rest can require a live request context
+builder.Services.AddHoneyDrunkNode(options =>
+{
+    options.NodeId = new("my-node");
+    // Configure the remaining node identity options here.
+});
+
 // Add REST services
 builder.Services.AddRest(options =>
 {
@@ -16,7 +23,8 @@ builder.Services.AddRest(options =>
 
 var app = builder.Build();
 
-// Use REST middleware (call early, before routing)
+// Establish Kernel request context before REST middleware
+app.UseGridContext();
 app.UseRest();
 
 app.UseRouting();
@@ -54,17 +62,17 @@ app.MapHoneyDrunkWebRestVaultInvalidationWebhook();
 
 ### Correlation ID Propagation
 
-- Prefers Kernel `IOperationContext.CorrelationId` if available (via `IOperationContextAccessor`)
-- Falls back to `X-Correlation-Id` header from incoming requests
-- Generates a new correlation ID if not present
-- Returns correlation ID in response headers
-- Makes correlation ID available via `ICorrelationIdAccessor`
-- Logs a warning when both Kernel and header correlation IDs are present but differ
+- Requires Kernel `IOperationContext.CorrelationId` from a live request context
+- Returns the Kernel correlation ID in response headers
+- Makes the Kernel correlation ID available via `ICorrelationIdAccessor`
+- Logs a warning when incoming `X-Correlation-Id` differs from Kernel context
 
 ### Kernel Integration
 
-When `HoneyDrunk.Kernel` is registered, the middleware automatically:
-- Uses `IOperationContextAccessor.Current.CorrelationId` as the preferred correlation source
+Web.Rest requires `HoneyDrunk.Kernel` request context:
+- Call `AddHoneyDrunkNode()` before `AddRest()`
+- Call `UseGridContext()` before `UseRest()`
+- Uses `IOperationContextAccessor.Current.CorrelationId` as the correlation source
 - Enriches logging scopes with Kernel context values:
   - `OperationId`, `OperationName`, `CausationId`
   - `TenantId`, `ProjectId`
@@ -152,7 +160,7 @@ app.MapDelete("/api/items/{id}", DeleteItemAsync)
 | IncludeExceptionDetails | false | Include exception details in errors |
 | IncludeTraceId | true | Include trace ID in responses |
 | ReturnCorrelationIdInResponseHeader | true | Return correlation ID in headers |
-| GenerateCorrelationIdIfMissing | true | Generate ID if not in request |
+| GenerateCorrelationIdIfMissing | true | Legacy option; Web.Rest correlation now comes from Kernel request context |
 | EnableRequestLoggingScope | true | Enable logging scope middleware |
 | EnableExceptionMapping | true | Enable exception mapping middleware |
 | EnableModelStateValidationFilter | true | Enable model validation filter |
@@ -162,10 +170,10 @@ app.MapDelete("/api/items/{id}", DeleteItemAsync)
 ## Dependencies
 
 - HoneyDrunk.Web.Rest.Abstractions (contracts)
-- HoneyDrunk.Kernel.Abstractions 0.5.0 (optional, for Grid context and typed exceptions)
-- HoneyDrunk.Auth.AspNetCore 0.3.0 (optional, for identity context)
-- HoneyDrunk.Transport 0.5.0 (optional, for envelope mapping)
-- HoneyDrunk.Vault.EventGrid 0.3.0 (for cache invalidation webhook mapping)
-- HoneyDrunk.Vault.Providers.AppConfiguration 0.3.0 (for env-var-driven App Configuration bootstrap)
-- HoneyDrunk.Vault.Providers.AzureKeyVault 0.3.0 (for env-var-driven Key Vault bootstrap)
+- HoneyDrunk.Kernel.Abstractions 0.7.0 (required, for request context and typed exceptions)
+- HoneyDrunk.Auth.AspNetCore 0.4.0 (optional, for identity context)
+- HoneyDrunk.Transport 0.6.0 (optional, for envelope mapping)
+- HoneyDrunk.Vault.EventGrid 0.5.0 (for cache invalidation webhook mapping)
+- HoneyDrunk.Vault.Providers.AppConfiguration 0.5.0 (for env-var-driven App Configuration bootstrap)
+- HoneyDrunk.Vault.Providers.AzureKeyVault 0.5.0 (for env-var-driven Key Vault bootstrap)
 - Microsoft.AspNetCore.App (framework reference)

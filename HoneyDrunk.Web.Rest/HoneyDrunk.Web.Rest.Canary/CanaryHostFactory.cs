@@ -68,6 +68,9 @@ internal sealed class CanaryHostFactory : IDisposable
                 webBuilder.UseTestServer();
                 webBuilder.ConfigureServices(services =>
                 {
+                    IOperationContextAccessor operationContextAccessor = OperationContextAccessor ?? new FakeOperationContextAccessor();
+                    services.AddSingleton(operationContextAccessor);
+
                     services.AddRest(options =>
                     {
                         options.IncludeExceptionDetails = false;
@@ -82,12 +85,6 @@ internal sealed class CanaryHostFactory : IDisposable
                     });
 
                     services.AddRouting();
-
-                    // Register fake operation context accessor if provided
-                    if (OperationContextAccessor is not null)
-                    {
-                        services.AddSingleton(OperationContextAccessor);
-                    }
 
                     // Auth setup
                     if (UseAuthWithoutIdentityAccessor)
@@ -111,6 +108,29 @@ internal sealed class CanaryHostFactory : IDisposable
 
                 webBuilder.Configure(app =>
                 {
+                    app.Use(async (context, next) =>
+                    {
+                        IOperationContextAccessor accessor = context.RequestServices.GetRequiredService<IOperationContextAccessor>();
+                        bool createdContext = accessor.Current is null;
+
+                        if (createdContext)
+                        {
+                            string correlationId = context.Request.Headers.TryGetValue("X-Correlation-Id", out Microsoft.Extensions.Primitives.StringValues headerValue)
+                                && !string.IsNullOrWhiteSpace(headerValue.ToString())
+                                ? headerValue.ToString()
+                                : Guid.NewGuid().ToString("N");
+
+                            accessor.Current = new StubOperationContext(correlationId);
+                        }
+
+                        await next(context).ConfigureAwait(false);
+
+                        if (createdContext)
+                        {
+                            accessor.Current = null;
+                        }
+                    });
+
                     app.UseRest();
                     app.UseRouting();
 

@@ -11,6 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.0] - 2026-05-18
+
+### Changed
+
+- `AddRest()` now requires Kernel request context services from `AddHoneyDrunkNode()` before Web.Rest is registered.
+- `CorrelationMiddleware` now requires a live Kernel `IOperationContext` and uses its `CorrelationId`; it no longer falls back to request headers or generated IDs without Kernel context.
+- Consolidated duplicated `ApiResult` / `ApiResult<T>` failure factory construction while preserving public factory APIs and response shape.
+- Updated `HoneyDrunk.Kernel.Abstractions` from 0.5.0 to 0.7.0, `HoneyDrunk.Auth.AspNetCore` from 0.3.0 to 0.4.0, `HoneyDrunk.Transport` from 0.5.0 to 0.6.0, and Vault integration packages from 0.3.0 to 0.5.0.
+
 ## [0.4.0] - 2026-05-04
 
 ### Changed
@@ -62,6 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `RestOptions` for configurable middleware behavior
 - Fluent `AddHoneyDrunkWebRest()` service registration with Kernel and Auth integration
 
+[0.5.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.5.0
 [0.4.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.4.0
 [0.3.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.3.0
 [0.2.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.2.0

@@ -57,7 +57,7 @@ Central configuration for all REST middleware and filters. Configure once during
 | Property | Default | Description |
 |----------|---------|-------------|
 | `CorrelationIdHeaderName` | `"X-Correlation-Id"` | HTTP header name for correlation ID |
-| `GenerateCorrelationIdIfMissing` | `true` | Generate new GUID if header not present |
+| `GenerateCorrelationIdIfMissing` | `true` | Legacy option; Web.Rest correlation now comes from Kernel request context |
 | `ReturnCorrelationIdInResponseHeader` | `true` | Include correlation ID in response headers |
 
 #### Error Handling Settings
@@ -84,9 +84,9 @@ Central configuration for all REST middleware and filters. Configure once during
 ```csharp
 builder.Services.AddRest(options =>
 {
-    // Correlation ID
+    // Correlation ID (sourced from Kernel request context)
     options.CorrelationIdHeaderName = "X-Correlation-Id";
-    options.GenerateCorrelationIdIfMissing = true;
+    options.GenerateCorrelationIdIfMissing = true; // Legacy option
     options.ReturnCorrelationIdInResponseHeader = true;
     
     // Error handling

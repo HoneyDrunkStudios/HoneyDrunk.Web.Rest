@@ -1,4 +1,4 @@
-﻿# 🏛️ Architecture - Layer Responsibilities and Design
+# 🏛️ Architecture - Layer Responsibilities and Design
 
 [← Back to File Guide](FILE_GUIDE.md)
 
@@ -106,7 +106,9 @@ public class OrderResponse
 
 ```csharp
 // Requires ASP.NET Core
+builder.Services.AddHoneyDrunkNode(options => { /* node identity */ });
 builder.Services.AddRest();
+app.UseGridContext();
 app.UseRest();
 ```
 
@@ -165,7 +167,7 @@ app.UseRest();
 2. **AspNetCore depends on Abstractions** - Uses contracts for implementation
 3. **Applications depend on AspNetCore** - For full functionality
 4. **Client libraries depend on Abstractions only** - For contract definitions
-5. **Kernel/Auth/Transport are optional** - Middleware gracefully degrades when not registered
+5. **Kernel request context is required** - Web.Rest requires Kernel request context for correlation; Auth and Transport integrations remain optional
 
 [↑ Back to top](#table-of-contents)
 
@@ -444,12 +446,11 @@ app.MapGet("/orders/{id}", (Guid id) =>
 .WithRest<Order>();
 ```
 
-### Pattern 5: With Kernel Integration
+### Pattern .: With Kernel Integration
 
 ```csharp
-// When HoneyDrunk.Kernel is registered, correlation prefers IOperationContext
-// Register Kernel services so IOperationContextAccessor is available
-builder.Services.AddSingleton<IOperationContextAccessor, OperationContextAccessor>();
+// When HoneyDrunk.Kernel request context is established, correlation prefers IOperationContext
+// Register Kernel services and middleware so IOperationContextAccessor has a live request context
 builder.Services.AddRest();
 
 // Middleware will:

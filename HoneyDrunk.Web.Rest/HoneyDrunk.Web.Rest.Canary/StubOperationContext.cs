@@ -10,7 +10,7 @@ namespace HoneyDrunk.Web.Rest.Canary;
 internal sealed class StubOperationContext(string correlationId) : IOperationContext
 {
     /// <inheritdoc/>
-    public IGridContext GridContext { get; } = new StubGridContext();
+    public IGridContext GridContext { get; } = new StubGridContext(correlationId);
 
     /// <inheritdoc/>
     public string OperationName => "canary-stub";
