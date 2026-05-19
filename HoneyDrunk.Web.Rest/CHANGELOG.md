@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Internal
+
+- Seeded Web.Rest coverage baseline above the Grid PR coverage gate floor and wired the coverage baseline ratchet artifact.
+- Added focused Web.Rest helper coverage and kept canary tests from emitting separate coverage artifacts that can understate unit coverage in the PR gate.
+
 ## [0.5.0] - 2026-05-18
 
 ### Changed
