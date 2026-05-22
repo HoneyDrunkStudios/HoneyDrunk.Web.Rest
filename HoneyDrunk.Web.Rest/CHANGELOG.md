@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Internal
 
+- Adopted HoneyDrunk.Standards.Tests 0.2.9 for Web.Rest tests/canaries and refreshed HoneyDrunk.Standards to 0.2.9 for ADR-0047 testing alignment.
 - Seeded Web.Rest coverage baseline above the Grid PR coverage gate floor and wired the coverage baseline ratchet artifact.
 - Added focused Web.Rest helper coverage and kept canary tests from emitting separate coverage artifacts that can understate unit coverage in the PR gate.
 

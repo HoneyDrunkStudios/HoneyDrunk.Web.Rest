@@ -77,29 +77,37 @@ public sealed class CorrelationIdAccessorTests
         CorrelationIdAccessor accessor1 = new();
         CorrelationIdAccessor accessor2 = new();
 
-        string? capturedId1 = null;
-        string? capturedId2 = null;
+        TaskCompletionSource bothContextsSet = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        int contextsSet = 0;
 
-        Task task1 = Task.Run(() =>
+        Task<string?> task1 = Task.Run(async () =>
         {
             accessor1.SetCorrelationId("context-1-id");
-            Thread.Sleep(50); // Ensure overlap
-            capturedId1 = accessor1.CorrelationId;
+            SignalContextSet();
+            await bothContextsSet.Task;
+            return accessor1.CorrelationId;
         });
 
-        Task task2 = Task.Run(() =>
+        Task<string?> task2 = Task.Run(async () =>
         {
             accessor2.SetCorrelationId("context-2-id");
-            Thread.Sleep(50); // Ensure overlap
-            capturedId2 = accessor2.CorrelationId;
+            SignalContextSet();
+            await bothContextsSet.Task;
+            return accessor2.CorrelationId;
         });
 
-        await Task.WhenAll(task1, task2);
+        string?[] capturedIds = await Task.WhenAll(task1, task2);
 
-        // Note: Since CorrelationIdAccessor uses static AsyncLocal, the values
-        // may affect each other. This test verifies the behavior.
-        // In production, each request gets its own correlation ID set at the start.
-        (capturedId1 ?? capturedId2).ShouldNotBeNullOrWhiteSpace();
+        capturedIds[0].ShouldBe("context-1-id");
+        capturedIds[1].ShouldBe("context-2-id");
+
+        void SignalContextSet()
+        {
+            if (Interlocked.Increment(ref contextsSet) == 2)
+            {
+                bothContextsSet.SetResult();
+            }
+        }
     }
 
     /// <summary>
