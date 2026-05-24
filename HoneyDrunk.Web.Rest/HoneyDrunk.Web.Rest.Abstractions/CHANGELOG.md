@@ -9,22 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Refreshed HoneyDrunk.Standards to 0.2.9 for ADR-0047 testing tooling alignment.
 
 ## [0.5.0] - 2026-05-18
 
 ### Changed
 
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Consolidated `ApiResult` and `ApiResult<T>` failure factory construction while preserving public factory method signatures and serialized response contracts.
 
 ## [0.4.0] - 2026-05-04
 
 ### Changed
 
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Version alignment with HoneyDrunk.Web.Rest.AspNetCore 0.4.0
 - No API surface changes
 
@@ -32,7 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Version alignment with HoneyDrunk.Web.Rest.AspNetCore 0.3.0
 - No API surface changes
 
@@ -40,7 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Version alignment with HoneyDrunk.Web.Rest.AspNetCore 0.2.0
 - No API surface changes
 

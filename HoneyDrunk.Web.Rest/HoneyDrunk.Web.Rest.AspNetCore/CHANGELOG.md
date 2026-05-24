@@ -9,16 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Refreshed HoneyDrunk.Standards to 0.2.9 for ADR-0047 testing tooling alignment.
 
 ## [0.5.0] - 2026-05-18
 
 ### Changed
 
-
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 #### Middleware
 - `CorrelationMiddleware` now requires a live Kernel `IOperationContext` for each request and uses `IOperationContext.CorrelationId` as the only correlation source.
 - Incoming correlation headers are still compared to Kernel context for mismatch warnings, but Web.Rest no longer falls back to headers or generated IDs when Kernel context is missing.
@@ -37,8 +33,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 #### Middleware
 - `RequestLoggingScopeMiddleware` now reads Kernel's typed `TenantId` and omits the `TenantId` log-scope property for Internal-tenant requests.
 - Non-Internal tenant requests continue to emit `TenantId` as the sanitized ULID string.
@@ -65,8 +59,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-
-- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 #### Dependencies
 - Bumped `HoneyDrunk.Kernel.Abstractions` from 0.3.0 to 0.4.0
 - Bumped `HoneyDrunk.Transport` from 0.3.0 to 0.4.0
