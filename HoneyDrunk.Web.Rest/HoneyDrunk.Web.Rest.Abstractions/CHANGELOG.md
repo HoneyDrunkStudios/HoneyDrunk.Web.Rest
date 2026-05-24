@@ -14,23 +14,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.5.0] - 2026-05-18
 
 ### Changed
+
 - Consolidated `ApiResult` and `ApiResult<T>` failure factory construction while preserving public factory method signatures and serialized response contracts.
 
 ## [0.4.0] - 2026-05-04
 
 ### Changed
+
 - Version alignment with HoneyDrunk.Web.Rest.AspNetCore 0.4.0
 - No API surface changes
 
 ## [0.3.0] - 2026-04-25
 
 ### Changed
+
 - Version alignment with HoneyDrunk.Web.Rest.AspNetCore 0.3.0
 - No API surface changes
 
 ## [0.2.0] - 2026-02-14
 
 ### Changed
+
 - Version alignment with HoneyDrunk.Web.Rest.AspNetCore 0.2.0
 - No API surface changes
 
