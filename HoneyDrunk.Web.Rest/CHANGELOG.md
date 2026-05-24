@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+
+- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - `AddRest()` now requires Kernel request context services from `AddHoneyDrunkNode()` before Web.Rest is registered.
 - `CorrelationMiddleware` now requires a live Kernel `IOperationContext` and uses its `CorrelationId`; it no longer falls back to request headers or generated IDs without Kernel context.
 - Consolidated duplicated `ApiResult` / `ApiResult<T>` failure factory construction while preserving public factory APIs and response shape.
@@ -32,6 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+
+- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Updated `HoneyDrunk.Kernel.Abstractions` from 0.4.0 to 0.5.0 for typed `TenantId` context adoption.
 - Updated `HoneyDrunk.Transport` from 0.4.0 to 0.5.0.
 - `RequestLoggingScopeMiddleware` now omits the `TenantId` log-scope property for Internal-tenant requests and emits the sanitized ULID string for non-Internal requests.
@@ -46,6 +50,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+
+- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Updated `HoneyDrunk.Web.Rest.AspNetCore` to consume the Vault Azure Key Vault, App Configuration, and Event Grid provider packages.
 
 ## [0.2.0] - 2026-02-14
@@ -61,6 +67,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+
+- Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Updated HoneyDrunk.Kernel.Abstractions from 0.3.0 to 0.4.0
 - Updated HoneyDrunk.Transport from 0.3.0 to 0.4.0
 - Updated HoneyDrunk.Auth.AspNetCore from 0.1.0 to 0.2.0
