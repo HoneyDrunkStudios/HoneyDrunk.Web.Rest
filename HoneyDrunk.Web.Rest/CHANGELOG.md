@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Internal
 
+- Onboarded Web.Rest to SonarQube Cloud (ADR-0011 D11). Added `sonar-project.properties` at the inner project subdir and wired a `sonarcloud` job in `pr.yml` that calls `HoneyDrunk.Actions/.github/workflows/job-sonarcloud.yml` after `pr-core`. Sources cover Abstractions + AspNetCore (Web.Rest bundles directly without a separate runtime project); tests cover both `HoneyDrunk.Web.Rest.Tests` and the `HoneyDrunk.Web.Rest.Canary` cross-Node verification project. Branch-protection requirement added separately after the first successful run lands.
 - Enabled ADR-0044 OpenClaw/Codex Grid Review Runner request generation for repository PRs.
 - Adopted HoneyDrunk.Standards.Tests 0.2.9 for Web.Rest tests/canaries and refreshed HoneyDrunk.Standards to 0.2.9 for ADR-0047 testing alignment.
 - Seeded Web.Rest coverage baseline above the Grid PR coverage gate floor and wired the coverage baseline ratchet artifact.
