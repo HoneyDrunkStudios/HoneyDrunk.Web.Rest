@@ -11,7 +11,7 @@ For per-release and per-package detail, see:
 - [HoneyDrunk.Web.Rest.Abstractions changelog](HoneyDrunk.Web.Rest/HoneyDrunk.Web.Rest.Abstractions/CHANGELOG.md)
 - [HoneyDrunk.Web.Rest.AspNetCore changelog](HoneyDrunk.Web.Rest/HoneyDrunk.Web.Rest.AspNetCore/CHANGELOG.md)
 
-## Unreleased
+## [Unreleased]
 
 ### Added
 
@@ -24,7 +24,7 @@ For per-release and per-package detail, see:
 - Adopted HoneyDrunk.Standards / HoneyDrunk.Standards.Tests 0.2.9 for ADR-0047 testing alignment.
 - Seeded the Web.Rest coverage baseline and wired the coverage baseline ratchet artifact.
 
-## 0.5.0 - Kernel-required request context
+## [0.5.0] - 2026-05-18 - Kernel-required request context
 
 ### Changed
 
@@ -33,14 +33,14 @@ For per-release and per-package detail, see:
 - Consolidated duplicated `ApiResult` / `ApiResult<T>` failure factory construction while preserving public factory APIs and response shape.
 - Updated Kernel.Abstractions to 0.7.0, Auth.AspNetCore to 0.4.0, Transport to 0.6.0, and Vault integration packages to 0.5.0.
 
-## 0.4.0 - Typed TenantId context
+## [0.4.0] - 2026-05-04 - Typed TenantId context
 
 ### Changed
 
 - Updated `HoneyDrunk.Kernel.Abstractions` to 0.5.0 for typed `TenantId` context adoption and `HoneyDrunk.Transport` to 0.5.0.
 - `RequestLoggingScopeMiddleware` now omits the `TenantId` log-scope property for Internal-tenant requests and emits the sanitized ULID string for non-Internal requests.
 
-## 0.3.0 - Vault and App Configuration bootstrap
+## [0.3.0] - 2026-04-25 - Vault and App Configuration bootstrap
 
 ### Added
 
@@ -52,7 +52,7 @@ For per-release and per-package detail, see:
 
 - Updated `HoneyDrunk.Web.Rest.AspNetCore` to consume the Vault Azure Key Vault, App Configuration, and Event Grid provider packages.
 
-## 0.2.0 - Exception mapping and auth shaping
+## [0.2.0] - 2026-02-14 - Exception mapping and auth shaping
 
 ### Added
 
@@ -66,7 +66,7 @@ For per-release and per-package detail, see:
 
 - Updated Kernel.Abstractions to 0.4.0, Transport to 0.4.0, and Auth.AspNetCore to 0.2.0.
 
-## 0.1.0 - Initial release
+## [0.1.0] - 2026-01-10 - Initial release
 
 ### Added
 
@@ -76,3 +76,10 @@ For per-release and per-package detail, see:
 - Standard header names, media type constants, and telemetry tag constants.
 - ASP.NET Core integration: `CorrelationMiddleware`, `ExceptionMappingMiddleware`, `RequestLoggingMiddleware`.
 - `RestOptions` for configurable middleware behavior and fluent service registration with Kernel and Auth integration.
+
+[Unreleased]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.5.0
+[0.4.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.4.0
+[0.3.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.3.0
+[0.2.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.2.0
+[0.1.0]: https://github.com/HoneyDrunkStudios/HoneyDrunk.Web.Rest/releases/tag/v0.1.0
