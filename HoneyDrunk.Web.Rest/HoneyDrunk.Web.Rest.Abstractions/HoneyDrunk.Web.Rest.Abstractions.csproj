@@ -8,10 +8,10 @@
 
     <!-- Package Metadata -->
     <PackageId>HoneyDrunk.Web.Rest.Abstractions</PackageId>
-    <Version>0.5.0</Version>
+    <Version>0.5.1</Version>
     <Authors>HoneyDrunk Studios</Authors>
     <Description>Pure contracts and constants for HoneyDrunk REST services. Provides standardized response envelopes (ApiResult, ApiErrorResponse), pagination contracts (PageRequest, PageResult), error codes, and telemetry tags. Zero runtime dependencies - can be used in any .NET project.</Description>
-    <PackageReleaseNotes>v0.5.0: Consolidated API result failure factories while preserving response contracts.</PackageReleaseNotes>
+    <PackageReleaseNotes>v0.5.1: Refresh stable dependencies while preserving target frameworks and HoneyDrunk public contracts.</PackageReleaseNotes>
     <PackageTags>rest;api;contracts;response;envelope;error;pagination;validation;constants;abstractions</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -29,14 +29,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HoneyDrunk.Standards" Version="0.2.9">
+    <PackageReference Include="HoneyDrunk.Standards" Version="0.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.201" />
+    <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.401" />
   </ItemGroup>
 
   <ItemGroup>

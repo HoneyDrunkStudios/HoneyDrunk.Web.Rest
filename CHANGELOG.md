@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.1] - 2026-09-26
+
+### Changed
+
+- Refresh stable NuGet dependencies; preserve target frameworks and HoneyDrunk public contracts.
+
+| Dependency | Previous | Updated |
+| --- | --- | --- |
+| Microsoft.AspNetCore.Mvc.Testing | 10.0.5 | 10.0.12 |
+| Microsoft.CodeAnalysis.NetAnalyzers | 10.0.201 | 10.0.401 |
+
+
 All notable changes to the HoneyDrunk.Web.Rest repository are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
@@ -10,6 +22,21 @@ For per-release and per-package detail, see:
 - [Solution changelog](HoneyDrunk.Web.Rest/CHANGELOG.md)
 - [HoneyDrunk.Web.Rest.Abstractions changelog](HoneyDrunk.Web.Rest/HoneyDrunk.Web.Rest.Abstractions/CHANGELOG.md)
 - [HoneyDrunk.Web.Rest.AspNetCore changelog](HoneyDrunk.Web.Rest/HoneyDrunk.Web.Rest.AspNetCore/CHANGELOG.md)
+
+
+
+
+
+### Verified HoneyDrunk dependencies
+
+- HoneyDrunk.Auth.AspNetCore: 0.4.0 -> 0.6.1 (verified on NuGet.org).
+- HoneyDrunk.Kernel.Abstractions: 0.7.0 -> 0.8.1 (verified on NuGet.org).
+- HoneyDrunk.Standards: 0.2.9 -> 0.3.0 (verified on NuGet.org).
+- HoneyDrunk.Standards.Tests: 0.2.9 -> 0.3.0 (verified on NuGet.org).
+- HoneyDrunk.Transport: 0.6.0 -> 0.7.2 (verified on NuGet.org).
+- HoneyDrunk.Vault.EventGrid: 0.5.0 -> 0.8.1 (verified on NuGet.org).
+- HoneyDrunk.Vault.Providers.AppConfiguration: 0.5.0 -> 0.8.1 (verified on NuGet.org).
+- HoneyDrunk.Vault.Providers.AzureKeyVault: 0.5.0 -> 0.8.1 (verified on NuGet.org).
 
 ## [Unreleased]
 

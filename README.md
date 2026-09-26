@@ -1,4 +1,4 @@
-﻿# HoneyDrunk.Web.Rest
+# HoneyDrunk.Web.Rest
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
@@ -33,10 +33,10 @@ HoneyDrunk.Web.Rest provides **REST API conventions and middleware** for HoneyDr
 ```xml
 <ItemGroup>
   <!-- Full ASP.NET Core integration -->
-  <PackageReference Include="HoneyDrunk.Web.Rest.AspNetCore" Version="0.5.0" />
+  <PackageReference Include="HoneyDrunk.Web.Rest.AspNetCore" Version="0.5.1" />
   
   <!-- Or just the contracts (no runtime dependencies) -->
-  <PackageReference Include="HoneyDrunk.Web.Rest.Abstractions" Version="0.5.0" />
+  <PackageReference Include="HoneyDrunk.Web.Rest.Abstractions" Version="0.5.1" />
 </ItemGroup>
 ```
 
