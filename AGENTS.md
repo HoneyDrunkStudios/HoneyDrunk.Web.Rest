@@ -19,3 +19,11 @@ dotnet test HoneyDrunk.Web.Rest/HoneyDrunk.Web.Rest.slnx -c Release --no-build
 ```
 
 Use the checked-in workflow and relevant test documentation for additional integration prerequisites, coverage and consumer checks. Do not use live resources or credentials merely to make a local check pass.
+
+## Code Review Rules
+
+Apply the [shared review criteria](https://github.com/HoneyDrunkStudios/HoneyDrunk.Standards/blob/main/HoneyDrunk.Standards/docs/CONVENTIONS.md#code-review) to changed behavior, using the repository boundaries above. Report actionable findings with the failing path, concrete impact and a small corrective action; disclose unavailable evidence. These rules grant no cross-repository access or merge authority.
+
+- Keep shared response/error/correlation contracts here and product endpoints/business rules in consuming apps. Preserve HTTP status and serialization compatibility; verify real consumers before changing defaults.
+- Trace exception, validation, cancellation and empty-result paths so middleware cannot leak secrets, misreport failure as success or lose correlation. Check response size/streaming behavior where changed.
+- Require observable HTTP/serialization and middleware contract tests, including error and cancellation paths. Reuse existing mappings instead of adding another wrapper layer; follow the owning app's authorization policy rather than inventing one here.
