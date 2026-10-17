@@ -6,8 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 **Note:** See individual package CHANGELOGs for detailed changes:
-- [HoneyDrunk.Web.Rest.Abstractions CHANGELOG](HoneyDrunk.Web.Rest.Abstractions/CHANGELOG.md)
-- [HoneyDrunk.Web.Rest.AspNetCore CHANGELOG](HoneyDrunk.Web.Rest.AspNetCore/CHANGELOG.md)
+- [HoneyDrunk.Web.Rest.Abstractions CHANGELOG](../src/HoneyDrunk.Web.Rest.Abstractions/CHANGELOG.md)
+- [HoneyDrunk.Web.Rest.AspNetCore CHANGELOG](../src/HoneyDrunk.Web.Rest.AspNetCore/CHANGELOG.md)
 
 ---
 

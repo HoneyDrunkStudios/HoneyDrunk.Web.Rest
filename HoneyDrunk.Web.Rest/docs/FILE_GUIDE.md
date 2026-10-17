@@ -383,8 +383,8 @@ Applications using HoneyDrunk.Web.Rest:
 
 ### Official Documentation
 - [README.md](../../README.md) - Project overview and quick start
-- [Abstractions README](../HoneyDrunk.Web.Rest.Abstractions/README.md) - Contracts documentation
-- [AspNetCore README](../HoneyDrunk.Web.Rest.AspNetCore/README.md) - Middleware documentation
+- [Abstractions README](../../src/HoneyDrunk.Web.Rest.Abstractions/README.md) - Contracts documentation
+- [AspNetCore README](../../src/HoneyDrunk.Web.Rest.AspNetCore/README.md) - Middleware documentation
 
 ### Related Projects
 - [HoneyDrunk.Kernel](https://github.com/HoneyDrunkStudios/HoneyDrunk.Kernel) - Required Core Grid primitives

@@ -20,8 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 For per-release and per-package detail, see:
 
 - [Solution changelog](HoneyDrunk.Web.Rest/CHANGELOG.md)
-- [HoneyDrunk.Web.Rest.Abstractions changelog](HoneyDrunk.Web.Rest/HoneyDrunk.Web.Rest.Abstractions/CHANGELOG.md)
-- [HoneyDrunk.Web.Rest.AspNetCore changelog](HoneyDrunk.Web.Rest/HoneyDrunk.Web.Rest.AspNetCore/CHANGELOG.md)
+- [HoneyDrunk.Web.Rest.Abstractions changelog](src/HoneyDrunk.Web.Rest.Abstractions/CHANGELOG.md)
+- [HoneyDrunk.Web.Rest.AspNetCore changelog](src/HoneyDrunk.Web.Rest.AspNetCore/CHANGELOG.md)
 
 
 

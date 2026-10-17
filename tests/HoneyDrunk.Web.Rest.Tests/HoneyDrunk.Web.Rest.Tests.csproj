@@ -10,7 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HoneyDrunk.Kernel.Abstractions" Version="0.8.1" />
     <PackageReference Include="HoneyDrunk.Standards" Version="0.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -21,8 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HoneyDrunk.Web.Rest.Abstractions\HoneyDrunk.Web.Rest.Abstractions.csproj" />
-    <ProjectReference Include="..\HoneyDrunk.Web.Rest.AspNetCore\HoneyDrunk.Web.Rest.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\HoneyDrunk.Web.Rest.Abstractions\HoneyDrunk.Web.Rest.Abstractions.csproj" />
+    <ProjectReference Include="..\..\src\HoneyDrunk.Web.Rest.AspNetCore\HoneyDrunk.Web.Rest.AspNetCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>
