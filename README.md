@@ -239,32 +239,37 @@ services.AddRest(options =>
 ## Project Structure
 
 ```
-HoneyDrunk.Web.Rest/
+HoneyDrunk.Web.Rest/                         # Repository root (open HoneyDrunk.Web.Rest.slnx from here)
++-- HoneyDrunk.Web.Rest.slnx                 # Solution file
++-- HoneyDrunk.Web.Rest/                     # Retained documentation (not a project folder)
+|   +-- CHANGELOG.md                         # Solution changelog
+|   +-- docs/                                # Component guides (start at FILE_GUIDE.md)
+|
 +-- src/HoneyDrunk.Web.Rest.Abstractions/    # Pure contracts (no dependencies)
-|   +-- Constants/                        # HeaderNames, MediaTypes
-|   +-- Errors/                           # ApiError, ApiErrorCode, ValidationError
-|   +-- Paging/                           # PageRequest, PageResult<T>
-|   +-- Results/                          # ApiResult, ApiResult<T>, ApiResultStatus
-|   +-- Telemetry/                        # RestTelemetryTags
+|   +-- Constants/                           # HeaderNames, MediaTypes
+|   +-- Errors/                              # ApiError, ApiErrorCode, ValidationError
+|   +-- Paging/                              # PageRequest, PageResult<T>
+|   +-- Results/                             # ApiResult, ApiResult<T>, ApiResultStatus
+|   +-- Telemetry/                           # RestTelemetryTags
 |
 +-- src/HoneyDrunk.Web.Rest.AspNetCore/      # ASP.NET Core integration
-|   +-- Auth/                             # Authentication failure handling
-|   +-- Configuration/                    # RestOptions
-|   +-- Context/                          # ICorrelationIdAccessor
-|   +-- Errors/                           # Exception mapping
-|   +-- Extensions/                       # DI and middleware extensions
-|   +-- Middleware/                       # Correlation, exception, logging
-|   +-- MinimalApi/                       # Endpoint conventions
-|   +-- Mvc/                              # Filters and conventions
-|   +-- Serialization/                    # JSON defaults
-|   +-- Transport/                        # Transport result extensions
+|   +-- Auth/                                # Authentication failure handling
+|   +-- Configuration/                       # RestOptions
+|   +-- Context/                             # ICorrelationIdAccessor
+|   +-- Errors/                              # Exception mapping
+|   +-- Extensions/                          # DI and middleware extensions
+|   +-- Middleware/                          # Correlation, exception, logging
+|   +-- MinimalApi/                          # Endpoint conventions
+|   +-- Mvc/                                 # Filters and conventions
+|   +-- Serialization/                       # JSON defaults
+|   +-- Transport/                           # Transport result extensions
 |
-+-- tests/HoneyDrunk.Web.Rest.Tests/           # Integration tests
-|   +-- Abstractions/                     # Contract tests
-|   +-- AspNetCore/                       # Middleware tests
-|   +-- TestHost/                         # Test infrastructure
++-- tests/HoneyDrunk.Web.Rest.Tests/         # Integration tests
+|   +-- Abstractions/                        # Contract tests
+|   +-- AspNetCore/                          # Middleware tests
+|   +-- TestHost/                            # Test infrastructure
 |
-+-- tests/HoneyDrunk.Web.Rest.Canary/          # Canary integration tests
++-- tests/HoneyDrunk.Web.Rest.Canary/        # Canary integration tests
     +-- 26 tests across 5 invariants
     +-- Validates upstream contract compatibility
 ```
