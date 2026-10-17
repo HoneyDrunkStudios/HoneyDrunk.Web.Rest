@@ -16,7 +16,7 @@
 
 MVC components for controller-based APIs including filters and action result conventions.
 
-**Location:** `HoneyDrunk.Web.Rest.AspNetCore/Mvc/`
+**Location:** `src/HoneyDrunk.Web.Rest.AspNetCore/Mvc/`
 
 **Components:**
 - **ModelStateValidationFilter** - Converts invalid model state to `ApiErrorResponse`

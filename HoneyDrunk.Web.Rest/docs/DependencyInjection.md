@@ -18,7 +18,7 @@
 
 Extension methods for registering REST services and middleware.
 
-**Location:** `HoneyDrunk.Web.Rest.AspNetCore/Extensions/` and `HoneyDrunk.Web.Rest.AspNetCore/Context/`
+**Location:** `src/HoneyDrunk.Web.Rest.AspNetCore/Extensions/` and `src/HoneyDrunk.Web.Rest.AspNetCore/Context/`
 
 **Components:**
 - **ServiceCollectionExtensions** - `AddRest()` for DI registration

@@ -232,7 +232,7 @@ public class OrderService
 
 ```
 HoneyDrunk.Web.Rest/
-├── HoneyDrunk.Web.Rest.Abstractions/    # Pure contracts (no dependencies)
+├── src/HoneyDrunk.Web.Rest.Abstractions/    # Pure contracts (no dependencies)
 │   ├── Constants/                        # HeaderNames, MediaTypes
 │   │   ├── HeaderNames.cs               # Standard HTTP header names
 │   │   └── MediaTypes.cs                # Standard media types
@@ -251,7 +251,7 @@ HoneyDrunk.Web.Rest/
 │   └── Telemetry/                        # Observability constants
 │       └── RestTelemetryTags.cs         # Telemetry tag names
 │
-├── HoneyDrunk.Web.Rest.AspNetCore/      # ASP.NET Core integration
+├── src/HoneyDrunk.Web.Rest.AspNetCore/      # ASP.NET Core integration
 │   ├── Auth/                             # Authentication handling
 │   │   ├── RestAuthExtensions.cs        # Auth response helper methods
 │   │   └── RestAuthorizationResultHandler.cs # IAuthorizationMiddlewareResultHandler
@@ -282,12 +282,12 @@ HoneyDrunk.Web.Rest/
 │   └── Transport/                        # Transport integration
 │       └── TransportResultExtensions.cs # ITransportEnvelope to ApiResult mapping
 │
-└── HoneyDrunk.Web.Rest.Tests/           # Integration tests
+└── tests/HoneyDrunk.Web.Rest.Tests/           # Integration tests
     ├── Abstractions/                     # Contract tests
     ├── AspNetCore/                       # Middleware tests
     └── TestHost/                         # Test infrastructure
 
-└── HoneyDrunk.Web.Rest.Canary/          # Canary integration tests
+└── tests/HoneyDrunk.Web.Rest.Canary/          # Canary integration tests
     ├── 26 tests across 5 invariants
     └── Validates upstream contract compatibility
 ```

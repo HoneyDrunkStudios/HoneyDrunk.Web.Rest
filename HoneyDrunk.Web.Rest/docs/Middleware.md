@@ -19,7 +19,7 @@
 
 Middleware components that process requests and responses in the ASP.NET Core pipeline.
 
-**Location:** `HoneyDrunk.Web.Rest.AspNetCore/Middleware/`
+**Location:** `src/HoneyDrunk.Web.Rest.AspNetCore/Middleware/`
 
 **Components:**
 - **CorrelationMiddleware** - Extracts/generates correlation IDs (uses Kernel if available)

@@ -16,7 +16,7 @@
 
 Extension methods for applying REST conventions to minimal API endpoints.
 
-**Location:** `HoneyDrunk.Web.Rest.AspNetCore/MinimalApi/`
+**Location:** `src/HoneyDrunk.Web.Rest.AspNetCore/MinimalApi/`
 
 **Components:**
 - **RestEndpointConventions** - Extension methods for `RouteHandlerBuilder`
