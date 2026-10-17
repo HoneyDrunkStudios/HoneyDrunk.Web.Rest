@@ -231,63 +231,69 @@ public class OrderService
 ## 📦 Project Structure
 
 ```
-HoneyDrunk.Web.Rest/
-├── HoneyDrunk.Web.Rest.Abstractions/    # Pure contracts (no dependencies)
-│   ├── Constants/                        # HeaderNames, MediaTypes
-│   │   ├── HeaderNames.cs               # Standard HTTP header names
-│   │   └── MediaTypes.cs                # Standard media types
-│   ├── Errors/                           # Error contracts
-│   │   ├── ApiError.cs                  # Single error representation
-│   │   ├── ApiErrorCode.cs              # Machine-readable error codes
-│   │   ├── ApiErrorResponse.cs          # Error response envelope
-│   │   └── ValidationError.cs           # Field-level validation error
-│   ├── Paging/                           # Pagination contracts
-│   │   ├── PageRequest.cs               # Pagination request parameters
-│   │   └── PageResult.cs                # Paginated result set
-│   ├── Results/                          # Result contracts
-│   │   ├── ApiResult.cs                 # Non-generic result envelope
-│   │   ├── ApiResultOfT.cs              # Generic result with data
-│   │   └── ApiResultStatus.cs           # Result status enumeration
-│   └── Telemetry/                        # Observability constants
-│       └── RestTelemetryTags.cs         # Telemetry tag names
+HoneyDrunk.Web.Rest/                         # Repository root (open HoneyDrunk.Web.Rest.slnx from here)
+├── HoneyDrunk.Web.Rest.slnx                 # Solution file
+├── HoneyDrunk.Web.Rest/                     # Retained documentation (not a project folder)
+│   ├── CHANGELOG.md                         # Solution changelog
+│   └── docs/                                # Component guides (start at FILE_GUIDE.md)
 │
-├── HoneyDrunk.Web.Rest.AspNetCore/      # ASP.NET Core integration
-│   ├── Auth/                             # Authentication handling
-│   │   ├── RestAuthExtensions.cs        # Auth response helper methods
+├── src/HoneyDrunk.Web.Rest.Abstractions/    # Pure contracts (no dependencies)
+│   ├── Constants/                           # HeaderNames, MediaTypes
+│   │   ├── HeaderNames.cs                   # Standard HTTP header names
+│   │   └── MediaTypes.cs                    # Standard media types
+│   ├── Errors/                              # Error contracts
+│   │   ├── ApiError.cs                      # Single error representation
+│   │   ├── ApiErrorCode.cs                  # Machine-readable error codes
+│   │   ├── ApiErrorResponse.cs              # Error response envelope
+│   │   └── ValidationError.cs               # Field-level validation error
+│   ├── Paging/                              # Pagination contracts
+│   │   ├── PageRequest.cs                   # Pagination request parameters
+│   │   └── PageResult.cs                    # Paginated result set
+│   ├── Results/                             # Result contracts
+│   │   ├── ApiResult.cs                     # Non-generic result envelope
+│   │   ├── ApiResultOfT.cs                  # Generic result with data
+│   │   └── ApiResultStatus.cs               # Result status enumeration
+│   └── Telemetry/                           # Observability constants
+│       └── RestTelemetryTags.cs             # Telemetry tag names
+│
+├── src/HoneyDrunk.Web.Rest.AspNetCore/      # ASP.NET Core integration
+│   ├── Auth/                                # Authentication handling
+│   │   ├── RestAuthExtensions.cs            # Auth response helper methods
 │   │   └── RestAuthorizationResultHandler.cs # IAuthorizationMiddlewareResultHandler
-│   ├── Configuration/                    # Options and settings
-│   │   └── RestOptions.cs               # Configuration options
-│   ├── Context/                          # Request context
-│   │   ├── ICorrelationIdAccessor.cs    # Correlation ID contract
-│   │   └── CorrelationIdAccessor.cs     # AsyncLocal implementation
-│   ├── Errors/                           # Exception handling
-│   │   ├── DefaultExceptionMappings.cs  # Default exception mappings
-│   │   └── ExceptionToApiErrorMapper.cs # Exception-to-error mapper
-│   ├── Extensions/                       # DI and middleware extensions
-│   │   ├── ApplicationBuilderExtensions.cs # app.UseRest()
-│   │   ├── EndpointRouteBuilderExtensions.cs # Endpoint conventions
-│   │   └── ServiceCollectionExtensions.cs # services.AddRest()
-│   ├── Middleware/                       # Request pipeline
-│   │   ├── CorrelationMiddleware.cs     # Correlation ID propagation (uses Kernel if available)
-│   │   ├── ExceptionMappingMiddleware.cs # Exception-to-error mapping
-│   │   ├── ExceptionMappingResult.cs    # Mapping result type
+│   ├── Configuration/                       # Options and settings
+│   │   └── RestOptions.cs                   # Configuration options
+│   ├── Context/                             # Request context
+│   │   ├── ICorrelationIdAccessor.cs        # Correlation ID contract
+│   │   └── CorrelationIdAccessor.cs         # AsyncLocal implementation
+│   ├── Errors/                              # Exception handling
+│   │   ├── DefaultExceptionMappings.cs      # Default exception mappings
+│   │   └── ExceptionToApiErrorMapper.cs     # Exception-to-error mapper
+│   ├── Extensions/                          # DI and middleware extensions
+│   │   ├── ApplicationBuilderExtensions.cs  # app.UseRest()
+│   │   ├── HoneyDrunkWebRestBuilderExtensions.cs # AddWebRestBootstrap() bootstrap wiring
+│   │   ├── HoneyDrunkWebRestEndpointRouteBuilderExtensions.cs # Internal endpoint mapping (Vault invalidation webhook)
+│   │   └── ServiceCollectionExtensions.cs   # services.AddRest()
+│   ├── Middleware/                          # Request pipeline
+│   │   ├── CorrelationMiddleware.cs         # Correlation ID propagation (uses Kernel if available)
+│   │   ├── ExceptionMappingMiddleware.cs    # Exception-to-error mapping
+│   │   ├── ExceptionMappingResult.cs        # Mapping result type
 │   │   └── RequestLoggingScopeMiddleware.cs # Logging enrichment (uses Kernel if available)
-│   ├── MinimalApi/                       # Minimal API support
-│   │   └── RestEndpointConventions.cs   # Endpoint response and auth conventions
-│   ├── Mvc/                              # MVC support
-│   │   ├── ApiConventions.cs            # Controller conventions
-│   │   └── ModelStateValidationFilter.cs # Validation filter
-│   ├── Serialization/                    # JSON handling
-│   │   └── JsonOptionsDefaults.cs       # JSON serializer defaults
-│   └── Transport/                        # Transport integration
-│       └── TransportResultExtensions.cs # ITransportEnvelope to ApiResult mapping
+│   ├── MinimalApi/                          # Minimal API support
+│   │   └── RestEndpointConventions.cs       # Endpoint response and auth conventions
+│   ├── Mvc/                                 # MVC support
+│   │   ├── ApiConventions.cs                # Controller conventions
+│   │   └── ModelStateValidationFilter.cs    # Validation filter
+│   ├── Serialization/                       # JSON handling
+│   │   └── JsonOptionsDefaults.cs           # JSON serializer defaults
+│   └── Transport/                           # Transport integration
+│       └── TransportResultExtensions.cs     # ITransportEnvelope to ApiResult mapping
 │
-└── HoneyDrunk.Web.Rest.Tests/           # Integration tests
-    ├── Abstractions/                     # Contract tests
-    ├── AspNetCore/                       # Middleware tests
-    └── TestHost/                         # Test infrastructure
-
-└── HoneyDrunk.Web.Rest.Canary/          # Canary integration tests
+├── tests/HoneyDrunk.Web.Rest.Tests/         # Integration tests
+│   ├── Abstractions/                        # Contract tests
+│   ├── AspNetCore/                          # Middleware tests
+│   └── TestHost/                            # Test infrastructure
+│
+└── tests/HoneyDrunk.Web.Rest.Canary/        # Canary integration tests
     ├── 26 tests across 5 invariants
     └── Validates upstream contract compatibility
 ```
@@ -383,8 +389,8 @@ Applications using HoneyDrunk.Web.Rest:
 
 ### Official Documentation
 - [README.md](../../README.md) - Project overview and quick start
-- [Abstractions README](../HoneyDrunk.Web.Rest.Abstractions/README.md) - Contracts documentation
-- [AspNetCore README](../HoneyDrunk.Web.Rest.AspNetCore/README.md) - Middleware documentation
+- [Abstractions README](../../src/HoneyDrunk.Web.Rest.Abstractions/README.md) - Contracts documentation
+- [AspNetCore README](../../src/HoneyDrunk.Web.Rest.AspNetCore/README.md) - Middleware documentation
 
 ### Related Projects
 - [HoneyDrunk.Kernel](https://github.com/HoneyDrunkStudios/HoneyDrunk.Kernel) - Required Core Grid primitives

@@ -13,9 +13,9 @@ Work within the selected request. Preserve unrelated changes and use a separate 
 From the repository root for code/build changes:
 
 ```sh
-dotnet restore HoneyDrunk.Web.Rest/HoneyDrunk.Web.Rest.slnx
-dotnet build HoneyDrunk.Web.Rest/HoneyDrunk.Web.Rest.slnx -c Release --no-restore
-dotnet test HoneyDrunk.Web.Rest/HoneyDrunk.Web.Rest.slnx -c Release --no-build
+dotnet restore HoneyDrunk.Web.Rest.slnx
+dotnet build HoneyDrunk.Web.Rest.slnx -c Release --no-restore
+dotnet test HoneyDrunk.Web.Rest.slnx -c Release --no-build
 ```
 
 Use the checked-in workflow and relevant test documentation for additional integration prerequisites, coverage and consumer checks. Do not use live resources or credentials merely to make a local check pass.

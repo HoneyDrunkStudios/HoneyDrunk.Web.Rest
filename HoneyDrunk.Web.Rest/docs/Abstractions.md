@@ -31,7 +31,7 @@
 
 Pure contracts with **zero runtime dependencies**. This package can be used in any .NET project without requiring ASP.NET Core.
 
-**Location:** `HoneyDrunk.Web.Rest.Abstractions/`
+**Location:** `src/HoneyDrunk.Web.Rest.Abstractions/`
 
 **Key Contracts:**
 - **Results** - `ApiResult`, `ApiResult<T>` response envelopes

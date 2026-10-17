@@ -16,7 +16,7 @@
 
 Configuration classes for customizing REST behavior.
 
-**Location:** `HoneyDrunk.Web.Rest.AspNetCore/Configuration/` and `HoneyDrunk.Web.Rest.AspNetCore/Serialization/`
+**Location:** `src/HoneyDrunk.Web.Rest.AspNetCore/Configuration/` and `src/HoneyDrunk.Web.Rest.AspNetCore/Serialization/`
 
 **Components:**
 - **RestOptions** - Main configuration for middleware and filters

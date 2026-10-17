@@ -1,5 +1,10 @@
 # HoneyDrunk.Web.Rest
 
+## Repository layout
+
+Open `HoneyDrunk.Web.Rest.slnx` from the repository root. Production projects live in `src/`, test and canary projects in `tests/`, and examples in `samples/` where present. Shared build configuration stays at the root; project names, namespaces and package identities are unchanged. Existing documentation and release-history locations are retained.
+
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/download/dotnet/10.0)
 
@@ -234,32 +239,37 @@ services.AddRest(options =>
 ## Project Structure
 
 ```
-HoneyDrunk.Web.Rest/
-+-- HoneyDrunk.Web.Rest.Abstractions/    # Pure contracts (no dependencies)
-|   +-- Constants/                        # HeaderNames, MediaTypes
-|   +-- Errors/                           # ApiError, ApiErrorCode, ValidationError
-|   +-- Paging/                           # PageRequest, PageResult<T>
-|   +-- Results/                          # ApiResult, ApiResult<T>, ApiResultStatus
-|   +-- Telemetry/                        # RestTelemetryTags
+HoneyDrunk.Web.Rest/                         # Repository root (open HoneyDrunk.Web.Rest.slnx from here)
++-- HoneyDrunk.Web.Rest.slnx                 # Solution file
++-- HoneyDrunk.Web.Rest/                     # Retained documentation (not a project folder)
+|   +-- CHANGELOG.md                         # Solution changelog
+|   +-- docs/                                # Component guides (start at FILE_GUIDE.md)
 |
-+-- HoneyDrunk.Web.Rest.AspNetCore/      # ASP.NET Core integration
-|   +-- Auth/                             # Authentication failure handling
-|   +-- Configuration/                    # RestOptions
-|   +-- Context/                          # ICorrelationIdAccessor
-|   +-- Errors/                           # Exception mapping
-|   +-- Extensions/                       # DI and middleware extensions
-|   +-- Middleware/                       # Correlation, exception, logging
-|   +-- MinimalApi/                       # Endpoint conventions
-|   +-- Mvc/                              # Filters and conventions
-|   +-- Serialization/                    # JSON defaults
-|   +-- Transport/                        # Transport result extensions
++-- src/HoneyDrunk.Web.Rest.Abstractions/    # Pure contracts (no dependencies)
+|   +-- Constants/                           # HeaderNames, MediaTypes
+|   +-- Errors/                              # ApiError, ApiErrorCode, ValidationError
+|   +-- Paging/                              # PageRequest, PageResult<T>
+|   +-- Results/                             # ApiResult, ApiResult<T>, ApiResultStatus
+|   +-- Telemetry/                           # RestTelemetryTags
 |
-+-- HoneyDrunk.Web.Rest.Tests/           # Integration tests
-|   +-- Abstractions/                     # Contract tests
-|   +-- AspNetCore/                       # Middleware tests
-|   +-- TestHost/                         # Test infrastructure
++-- src/HoneyDrunk.Web.Rest.AspNetCore/      # ASP.NET Core integration
+|   +-- Auth/                                # Authentication failure handling
+|   +-- Configuration/                       # RestOptions
+|   +-- Context/                             # ICorrelationIdAccessor
+|   +-- Errors/                              # Exception mapping
+|   +-- Extensions/                          # DI and middleware extensions
+|   +-- Middleware/                          # Correlation, exception, logging
+|   +-- MinimalApi/                          # Endpoint conventions
+|   +-- Mvc/                                 # Filters and conventions
+|   +-- Serialization/                       # JSON defaults
+|   +-- Transport/                           # Transport result extensions
 |
-+-- HoneyDrunk.Web.Rest.Canary/          # Canary integration tests
++-- tests/HoneyDrunk.Web.Rest.Tests/         # Integration tests
+|   +-- Abstractions/                        # Contract tests
+|   +-- AspNetCore/                          # Middleware tests
+|   +-- TestHost/                            # Test infrastructure
+|
++-- tests/HoneyDrunk.Web.Rest.Canary/        # Canary integration tests
     +-- 26 tests across 5 invariants
     +-- Validates upstream contract compatibility
 ```
