@@ -40,6 +40,8 @@ For per-release and per-package detail, see:
 
 ## [Unreleased]
 
+- Update HoneyDrunk.Standards and HoneyDrunk.Standards.Tests to 0.4.1 to consume the architecture analyzer and TODO issue-link fixes.
+
 ### Added
 
 - Root `CHANGELOG.md` for repository-level change tracking (2026-06-19 docs-sync remediation).
