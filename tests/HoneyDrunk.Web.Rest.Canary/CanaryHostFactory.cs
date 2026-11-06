@@ -115,10 +115,7 @@ internal sealed class CanaryHostFactory : IDisposable
 
                         if (createdContext)
                         {
-                            string correlationId = context.Request.Headers.TryGetValue("X-Correlation-Id", out Microsoft.Extensions.Primitives.StringValues headerValue)
-                                && !string.IsNullOrWhiteSpace(headerValue.ToString())
-                                ? headerValue.ToString()
-                                : Guid.NewGuid().ToString("N");
+                            string correlationId = context.Request.Headers.TryGetValue("X-Correlation-Id", out Microsoft.Extensions.Primitives.StringValues headerValue) && !string.IsNullOrWhiteSpace(headerValue.ToString()) ? headerValue.ToString() : Guid.NewGuid().ToString("N");
 
                             accessor.Current = new StubOperationContext(correlationId);
                         }
