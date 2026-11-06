@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.5.2] - 2026-11-05
+
+### Changed
+
+- Refresh NuGet dependencies and adopt upstream package releases in dependency order. Preserve target frameworks and public contracts.
+
+| Dependency | Previous | Updated |
+| --- | --- | --- |
+| HoneyDrunk.Auth.AspNetCore | 0.6.1 | 0.6.2 |
+| HoneyDrunk.Kernel.Abstractions | 0.8.1 | 0.8.2 |
+| HoneyDrunk.Standards | 0.3.0 | 0.4.3 |
+| HoneyDrunk.Standards.Tests | 0.3.0 | 0.4.3 |
+| HoneyDrunk.Transport | 0.7.2 | 0.7.3 |
+| HoneyDrunk.Vault.EventGrid | 0.8.1 | 0.8.2 |
+| HoneyDrunk.Vault.Providers.AppConfiguration | 0.8.1 | 0.8.2 |
+| HoneyDrunk.Vault.Providers.AzureKeyVault | 0.8.1 | 0.8.2 |
+| Microsoft.AspNetCore.Mvc.Testing | 10.0.12 | 10.0.14 |
+| Microsoft.CodeAnalysis.NetAnalyzers | 10.0.401 | 10.0.403 |
+
 ## [0.5.1] - 2026-09-26
 
 ### Changed
