@@ -38,10 +38,10 @@ HoneyDrunk.Web.Rest provides **REST API conventions and middleware** for HoneyDr
 ```xml
 <ItemGroup>
   <!-- Full ASP.NET Core integration -->
-  <PackageReference Include="HoneyDrunk.Web.Rest.AspNetCore" Version="0.5.1" />
+  <PackageReference Include="HoneyDrunk.Web.Rest.AspNetCore" Version="0.5.2" />
   
   <!-- Or just the contracts (no runtime dependencies) -->
-  <PackageReference Include="HoneyDrunk.Web.Rest.Abstractions" Version="0.5.1" />
+  <PackageReference Include="HoneyDrunk.Web.Rest.Abstractions" Version="0.5.2" />
 </ItemGroup>
 ```
 
