@@ -68,8 +68,8 @@ public sealed class TestApiFactory : IDisposable
                         IOperationContextAccessor accessor = context.RequestServices.GetRequiredService<IOperationContextAccessor>();
                         string correlationId = context.Request.Headers.TryGetValue("X-Correlation-Id", out Microsoft.Extensions.Primitives.StringValues headerValue)
                             && !string.IsNullOrWhiteSpace(headerValue.ToString())
-                            ? headerValue.ToString()
-                            : Guid.NewGuid().ToString("N");
+                                ? headerValue.ToString()
+                                : Guid.NewGuid().ToString("N");
 
                         accessor.Current = new TestOperationContext(correlationId);
 
