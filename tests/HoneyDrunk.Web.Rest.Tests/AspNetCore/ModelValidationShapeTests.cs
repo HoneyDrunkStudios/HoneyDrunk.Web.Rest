@@ -3,7 +3,6 @@ using HoneyDrunk.Web.Rest.AspNetCore.Serialization;
 using HoneyDrunk.Web.Rest.Tests.TestHost;
 using Shouldly;
 using System.Net;
-using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 
