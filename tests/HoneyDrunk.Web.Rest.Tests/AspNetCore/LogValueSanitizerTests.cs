@@ -20,6 +20,21 @@ public sealed class LogValueSanitizerTests
     }
 
     /// <summary>
+    /// Verifies that isolated and repeated log delimiters cannot survive sanitization.
+    /// </summary>
+    /// <param name="value">The untrusted log value.</param>
+    /// <param name="expected">The expected single-line value.</param>
+    [Theory]
+    [InlineData("before\rafter", "beforeafter")]
+    [InlineData("before\nafter", "beforeafter")]
+    [InlineData("\r\n\r\nforged\tentry\r\n", "forged entry")]
+    [InlineData("\r\n\t", " ")]
+    public void Sanitize_WithLogDelimiters_ReturnsSingleLine(string value, string expected)
+    {
+        LogValueSanitizer.Sanitize(value).ShouldBe(expected);
+    }
+
+    /// <summary>
     /// Verifies that null values are preserved.
     /// </summary>
     [Fact]

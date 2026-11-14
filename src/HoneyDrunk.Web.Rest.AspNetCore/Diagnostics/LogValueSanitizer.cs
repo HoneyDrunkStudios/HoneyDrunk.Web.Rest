@@ -18,12 +18,6 @@ internal static class LogValueSanitizer
             return value;
         }
 
-        int index = value.AsSpan().IndexOfAny('\r', '\n', '\t');
-        if (index < 0)
-        {
-            return value;
-        }
-
         return value
             .Replace("\r", string.Empty, StringComparison.Ordinal)
             .Replace("\n", string.Empty, StringComparison.Ordinal)
