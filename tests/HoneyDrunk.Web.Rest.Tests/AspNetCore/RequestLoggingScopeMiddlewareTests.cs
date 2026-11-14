@@ -18,6 +18,74 @@ namespace HoneyDrunk.Web.Rest.Tests.AspNetCore;
 public sealed class RequestLoggingScopeMiddlewareTests
 {
     /// <summary>
+    /// Verifies that untrusted HTTP and Kernel values are sanitized at both logging sinks.
+    /// </summary>
+    /// <returns>A task representing the asynchronous test.</returns>
+    [Fact]
+    public async Task InvokeAsync_WithLogDelimiters_SanitizesWarningAndScope()
+    {
+        TestOperationContext operationContext = new(TenantId.NewId())
+        {
+            OperationNameValue = "operation\r\nforged",
+            ProjectIdValue = "project\tname",
+            GridContextValue = new TestGridContext(TenantId.NewId())
+            {
+                CorrelationIdValue = "kernel\r\ncorrelation",
+                NodeIdValue = "node\nforged",
+            },
+        };
+        TestOperationContextAccessor operationAccessor = new() { Current = operationContext };
+        CorrelationIdAccessor correlationAccessor = new();
+        CapturingLogger<CorrelationMiddleware> warningLogger = new();
+        CapturingLogger<RequestLoggingScopeMiddleware> scopeLogger = new();
+        IOptions<RestOptions> options = Options.Create(new RestOptions
+        {
+            IncludeTraceId = false,
+            ReturnCorrelationIdInResponseHeader = false,
+        });
+        bool nextCalled = false;
+        RequestLoggingScopeMiddleware scopeMiddleware = new(
+            _ =>
+            {
+                nextCalled = true;
+                return Task.CompletedTask;
+            },
+            scopeLogger,
+            options);
+        CorrelationMiddleware correlationMiddleware = new(
+            context => scopeMiddleware.InvokeAsync(context, correlationAccessor),
+            options,
+            warningLogger);
+        await using ServiceProvider services = new ServiceCollection()
+            .AddSingleton<IOperationContextAccessor>(operationAccessor)
+            .BuildServiceProvider();
+        DefaultHttpContext context = new() { RequestServices = services, TraceIdentifier = "request\nforged" };
+        context.Request.Headers[options.Value.CorrelationIdHeaderName] = "header\r\nforged";
+        context.Request.Method = "POST\tmethod";
+        context.Request.Path = "/path\r\nforged";
+
+        await correlationMiddleware.InvokeAsync(context, correlationAccessor, operationAccessor);
+
+        nextCalled.ShouldBeTrue();
+        context.Items[HoneyDrunk.Web.Rest.Abstractions.Constants.HeaderNames.CorrelationId].ShouldBe("kernel\r\ncorrelation");
+        Dictionary<string, object?> scope = scopeLogger.ScopeState.ShouldNotBeNull();
+        scope[RestTelemetryTags.CorrelationId].ShouldBe("kernelcorrelation");
+        scope[RestTelemetryTags.HttpMethod].ShouldBe("POST method");
+        scope[RestTelemetryTags.HttpPath].ShouldBe("/pathforged");
+        scope[RestTelemetryTags.RequestId].ShouldBe("requestforged");
+        scope["OperationName"].ShouldBe("operationforged");
+        scope["ProjectId"].ShouldBe("project name");
+        scope["NodeId"].ShouldBe("nodeforged");
+        string warning = warningLogger.FormattedMessage.ShouldNotBeNull();
+        warning.ShouldContain("headerforged");
+        warning.ShouldContain("kernelcorrelation");
+        warning.ShouldContain("POST method /pathforged");
+        warning.ShouldNotContain("\r");
+        warning.ShouldNotContain("\n");
+        warning.ShouldNotContain("\t");
+    }
+
+    /// <summary>
     /// Verifies that Internal tenant contexts omit the TenantId scope entry.
     /// </summary>
     /// <returns>A task representing the asynchronous test.</returns>
@@ -190,7 +258,9 @@ public sealed class RequestLoggingScopeMiddlewareTests
     {
         public bool IsInitialized => true;
 
-        public string CorrelationId => "correlation-123";
+        public string CorrelationIdValue { get; init; } = "correlation-123";
+
+        public string CorrelationId => CorrelationIdValue;
 
         public string? CausationId => null;
 
@@ -225,6 +295,8 @@ public sealed class RequestLoggingScopeMiddlewareTests
     {
         public Dictionary<string, object?>? ScopeState { get; private set; }
 
+        public string? FormattedMessage { get; private set; }
+
         public IDisposable? BeginScope<TState>(TState state)
             where TState : notnull
         {
@@ -232,10 +304,11 @@ public sealed class RequestLoggingScopeMiddlewareTests
             return NullDisposable.Instance;
         }
 
-        public bool IsEnabled(LogLevel logLevel) => false;
+        public bool IsEnabled(LogLevel logLevel) => true;
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
+            FormattedMessage = formatter(state, exception);
         }
     }
 

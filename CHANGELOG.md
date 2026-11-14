@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Simplify log-value sanitization so every nonempty value follows the same CR/LF/tab replacement path, preserving correlation propagation and log contents.
+- Add regression coverage for isolated/repeated log delimiters and sanitization at both middleware logging sinks.
+- Update HoneyDrunk.Transport from 0.7.3 to 0.8.0 and Microsoft.CodeAnalysis.NetAnalyzers from 10.0.403 to 11.0.100 without changing public contracts or target frameworks.
+
 ## [0.5.2] - 2026-11-05
 
 ### Changed
